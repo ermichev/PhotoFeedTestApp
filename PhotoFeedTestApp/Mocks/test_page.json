@@ -1,0 +1,96 @@
+{
+  "page": 1,
+  "per_page": 4,
+  "photos": [
+    {
+      "id": 25781673,
+      "width": 5152,
+      "height": 7728,
+      "url": "https://www.pexels.com/photo/a-woman-in-a-red-dress-is-looking-at-hot-air-balloons-25781673/",
+      "photographer": "Kübra  Kuzu",
+      "photographer_url": "https://www.pexels.com/@kubrakuzu",
+      "photographer_id": 120057696,
+      "avg_color": "#604943",
+      "src": {
+        "original": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg",
+        "large2x": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/25781673/pexels-photo-25781673.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "A woman in a red dress is looking at hot air balloons"
+    },
+    {
+      "id": 25772450,
+      "width": 4480,
+      "height": 6720,
+      "url": "https://www.pexels.com/photo/a-scenic-road-winding-through-a-lush-green-hillside-25772450/",
+      "photographer": "Petra Reid",
+      "photographer_url": "https://www.pexels.com/@petra-reid-419907087",
+      "photographer_id": 419907087,
+      "avg_color": "#9EA08B",
+      "src": {
+        "original": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg",
+        "large2x": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/25772450/pexels-photo-25772450.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "Free stock photo of batch, beach, coromandel"
+    },
+    {
+      "id": 25758512,
+      "width": 6960,
+      "height": 4640,
+      "url": "https://www.pexels.com/photo/american-car-25758512/",
+      "photographer": "Efrem  Efre",
+      "photographer_url": "https://www.pexels.com/@efrem-efre-2786187",
+      "photographer_id": 2786187,
+      "avg_color": "#687072",
+      "src": {
+        "original": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg",
+        "large2x": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/25758512/pexels-photo-25758512.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "American Car"
+    },
+    {
+      "id": 25740944,
+      "width": 4160,
+      "height": 6240,
+      "url": "https://www.pexels.com/photo/a-cup-of-tea-and-some-cherries-on-a-table-25740944/",
+      "photographer": "hello aesthe",
+      "photographer_url": "https://www.pexels.com/@helloaesthe",
+      "photographer_id": 53441892,
+      "avg_color": "#9A8C81",
+      "src": {
+        "original": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg",
+        "large2x": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "large": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+        "medium": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&h=350",
+        "small": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&h=130",
+        "portrait": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+        "landscape": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+        "tiny": "https://images.pexels.com/photos/25740944/pexels-photo-25740944.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+      },
+      "liked": false,
+      "alt": "A cup of tea and some cherries on a table"
+    }
+  ],
+  "total_results": 8000,
+  "next_page": "https://api.pexels.com/v1/curated/?page=2&per_page=4"
+}
