@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct PhotoFeedTestAppApp: App {
+struct PhotoFeedTestApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FeedView()
         }
     }
 }
