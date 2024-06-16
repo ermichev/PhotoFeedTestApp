@@ -6,13 +6,14 @@
 //
 
 import Combine
+import SDWebImage
 import SwiftUI
 
 final class ApplicationDeps:
     FeedCollectionViewControllerDeps
 {
     lazy var photosFeedService: PhotosFeedService = PhotosFeedServiceMock()
-    lazy var photoLoadingService: PhotoLoadingService = SimplePhotoLoadingService()
+    lazy var photoLoadingService: PhotoLoadingService = SDWebImageManager.shared
 }
 
 // -
@@ -26,18 +27,4 @@ extension EnvironmentValues {
         get { self[ApplicationDepsEnvironmentKey.self] }
         set { self[ApplicationDepsEnvironmentKey.self] = newValue }
     }
-}
-
-// -
-
-private class SimplePhotoLoadingService: PhotoLoadingService {
-    
-    func loadPhoto(_ model: PhotoModel, size: PhotoSize) -> AnyPublisher<UIImage, Error> {
-        guard let url = model.imageUrls[size] else { return Empty<UIImage, Error>().eraseToAnyPublisher() }
-        return URLSession.shared.dataTaskPublisher(for: url)
-            .compactMap { UIImage(data: $0.data) }
-            .mapError { $0 as Error }
-            .eraseToAnyPublisher()
-    }
-
 }

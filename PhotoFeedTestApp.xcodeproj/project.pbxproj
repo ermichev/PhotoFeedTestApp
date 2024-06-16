@@ -12,6 +12,8 @@
 		956328252C191B040044457E /* FeedCollectionPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328242C191B040044457E /* FeedCollectionPhotoCell.swift */; };
 		956328272C191E2B0044457E /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328262C191E2B0044457E /* Errors.swift */; };
 		956328292C1920E70044457E /* FeedCollectionInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328282C1920E70044457E /* FeedCollectionInteractor.swift */; };
+		9563282C2C1CF6F20044457E /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 9563282B2C1CF6F20044457E /* SDWebImage */; };
+		9563282E2C1CF7200044457E /* SDWebImageManager+PhotoLoadingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9563282D2C1CF71F0044457E /* SDWebImageManager+PhotoLoadingService.swift */; };
 		959801FF2C14974300DA8422 /* PhotoFeedTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959801FE2C14974300DA8422 /* PhotoFeedTestApp.swift */; };
 		959802012C14974300DA8422 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959802002C14974300DA8422 /* FeedView.swift */; };
 		959802032C14974900DA8422 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 959802022C14974900DA8422 /* Assets.xcassets */; };
@@ -33,6 +35,7 @@
 		956328242C191B040044457E /* FeedCollectionPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionPhotoCell.swift; sourceTree = "<group>"; };
 		956328262C191E2B0044457E /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		956328282C1920E70044457E /* FeedCollectionInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionInteractor.swift; sourceTree = "<group>"; };
+		9563282D2C1CF71F0044457E /* SDWebImageManager+PhotoLoadingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDWebImageManager+PhotoLoadingService.swift"; sourceTree = "<group>"; };
 		959801FB2C14974300DA8422 /* PhotoFeedTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoFeedTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		959801FE2C14974300DA8422 /* PhotoFeedTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFeedTestApp.swift; sourceTree = "<group>"; };
 		959802002C14974300DA8422 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
@@ -54,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9563282C2C1CF6F20044457E /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +140,7 @@
 			children = (
 				959802182C160BE000DA8422 /* PhotosFeedService.swift */,
 				9598021F2C161E2C00DA8422 /* PhotoLoadingService.swift */,
+				9563282D2C1CF71F0044457E /* SDWebImageManager+PhotoLoadingService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -165,6 +170,9 @@
 			dependencies = (
 			);
 			name = PhotoFeedTestApp;
+			packageProductDependencies = (
+				9563282B2C1CF6F20044457E /* SDWebImage */,
+			);
 			productName = PhotoFeedTestApp;
 			productReference = 959801FB2C14974300DA8422 /* PhotoFeedTestApp.app */;
 			productType = "com.apple.product-type.application";
@@ -193,6 +201,9 @@
 				Base,
 			);
 			mainGroup = 959801F22C14974300DA8422;
+			packageReferences = (
+				9563282A2C1CF6F20044457E /* XCRemoteSwiftPackageReference "SDWebImage" */,
+			);
 			productRefGroup = 959801FC2C14974300DA8422 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -223,6 +234,7 @@
 				959802012C14974300DA8422 /* FeedView.swift in Sources */,
 				9598020E2C149D7C00DA8422 /* FeedCollectionViewController.swift in Sources */,
 				956328212C1918370044457E /* FeedCollectionWaterfallLayout.swift in Sources */,
+				9563282E2C1CF7200044457E /* SDWebImageManager+PhotoLoadingService.swift in Sources */,
 				956328252C191B040044457E /* FeedCollectionPhotoCell.swift in Sources */,
 				959802222C161EF200DA8422 /* ApplicationDeps.swift in Sources */,
 				9598021B2C160CF400DA8422 /* PhotosFeedServiceMock.swift in Sources */,
@@ -438,6 +450,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9563282A2C1CF6F20044457E /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.19.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9563282B2C1CF6F20044457E /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9563282A2C1CF6F20044457E /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 959801F32C14974300DA8422 /* Project object */;
 }

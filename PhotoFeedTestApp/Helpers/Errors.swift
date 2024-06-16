@@ -9,4 +9,6 @@ import Foundation
 
 enum Errors: Error {
     case incorrectIndex
+    case invalidUrlSize
+    case unknownError
 }
