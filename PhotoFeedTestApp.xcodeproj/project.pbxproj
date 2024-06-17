@@ -27,6 +27,7 @@
 		9598021E2C160DD700DA8422 /* test_page.json in Resources */ = {isa = PBXBuildFile; fileRef = 9598021D2C160DD700DA8422 /* test_page.json */; };
 		959802202C161E2C00DA8422 /* PhotoLoadingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9598021F2C161E2C00DA8422 /* PhotoLoadingService.swift */; };
 		959802222C161EF200DA8422 /* ApplicationDeps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959802212C161EF200DA8422 /* ApplicationDeps.swift */; };
+		95B3E28F2C203B1500F7DE07 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B3E28E2C203B1500F7DE07 /* Logger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		9598021D2C160DD700DA8422 /* test_page.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_page.json; sourceTree = "<group>"; };
 		9598021F2C161E2C00DA8422 /* PhotoLoadingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLoadingService.swift; sourceTree = "<group>"; };
 		959802212C161EF200DA8422 /* ApplicationDeps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationDeps.swift; sourceTree = "<group>"; };
+		95B3E28E2C203B1500F7DE07 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +133,7 @@
 			children = (
 				959802132C14A66000DA8422 /* UIColor+Hex.swift */,
 				956328262C191E2B0044457E /* Errors.swift */,
+				95B3E28E2C203B1500F7DE07 /* Logger.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 				959802222C161EF200DA8422 /* ApplicationDeps.swift in Sources */,
 				9598021B2C160CF400DA8422 /* PhotosFeedServiceMock.swift in Sources */,
 				959802112C14A1E500DA8422 /* PhotoModel.swift in Sources */,
+				95B3E28F2C203B1500F7DE07 /* Logger.swift in Sources */,
 				959802162C160A0800DA8422 /* PhotosPageModel.swift in Sources */,
 				959801FF2C14974300DA8422 /* PhotoFeedTestApp.swift in Sources */,
 				956328232C1918430044457E /* FeedCollectionViewModel.swift in Sources */,

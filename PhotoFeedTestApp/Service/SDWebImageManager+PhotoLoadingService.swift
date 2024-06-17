@@ -18,16 +18,31 @@ extension SDWebImageManager: PhotoLoadingService {
 
         return Deferred { [weak self] in
             Future<UIImage, Error> { [weak self] promise in
-                self?.loadImage(with: url, progress: nil) { image, _, error, _, _, _ in
+                self?.loadImage(with: url, progress: nil) { image, _, error, cacheType, _, _ in
                     if let image {
+                        Logger.log.debug("Image loaded, cache type: \(cacheType)")
                         promise(.success(image))
                     } else {
+                        Logger.log.debug("Image load failed, error: \(error)")
                         promise(.failure(error ?? Errors.unknownError))
                     }
                 }
             }
         }.eraseToAnyPublisher()
     }
-    
+
+}
+
+extension SDImageCacheType: CustomStringConvertible {
+  
+    public var description: String {
+        switch self {
+        case .none: return ".none"
+        case .memory: return ".memory"
+        case .disk: return ".disk"
+        case .all: return ".all"
+        @unknown default: return "unknown case"
+        }
+    }
 
 }
