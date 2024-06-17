@@ -36,12 +36,17 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
             .store(in: &bag)
     }
 
+    func photoModel(for index: Int) -> PhotoModel? {
+        guard index < loadedModels.value.count else { return nil }
+        return loadedModels.value[index]
+    }
+
     func fetchPhoto(with index: Int) -> AnyPublisher<UIImage, Error> {
         guard index < loadedModels.value.count else {
             return Fail(error: Errors.incorrectIndex).eraseToAnyPublisher()
         }
 
-        return deps.photoLoadingService.loadPhoto(loadedModels.value[index], size: .portrait)
+        return deps.photoLoadingService.loadPhoto(loadedModels.value[index], size: .medium)
     }
     
     func startFetching() {

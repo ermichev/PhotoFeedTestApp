@@ -12,6 +12,7 @@ import UIKit
 protocol FeedCollectionInteractor {
     var state: AnyPublisher<PhotosFeedSessionState, Never> { get }
     var loadedItemsCount: AnyPublisher<Int, Never> { get }
+    func photoModel(for index: Int) -> PhotoModel?
     func fetchPhoto(with index: Int) -> AnyPublisher<UIImage, Error>
     func startFetching()
     func fetchNextPage()
@@ -44,6 +45,8 @@ final class FeedCollectionViewModel: NSObject {
 
     private let interactor: FeedCollectionInteractor
     private var numberOfItemsInSection: Int = 0
+    private var loadedItems: [PhotoModel] = []
+
     private var bag = Set<AnyCancellable>()
 
 }
@@ -67,7 +70,16 @@ extension FeedCollectionViewModel: UICollectionViewDataSource {
 
 }
 
-extension FeedCollectionViewModel: UICollectionViewDelegate {
+extension FeedCollectionViewModel: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath) -> CGSize
+    {
+        guard let model = interactor.photoModel(for: indexPath.item) else { return .zero }
+        return CGSize(width: CGFloat(model.size.width), height: CGFloat(model.size.height))
+    }
 
 }
 

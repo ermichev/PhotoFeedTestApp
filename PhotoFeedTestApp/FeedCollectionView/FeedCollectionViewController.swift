@@ -20,8 +20,10 @@ final class FeedCollectionViewController: UICollectionViewController {
         let interactor = FeedCollectionInteractorImpl(deps: deps, pageSize: 20)
         self.viewModel = FeedCollectionViewModel(interactor: interactor)
 
-        let layout = UICollectionViewFlowLayout()
+        let layout = FeedCollectionWaterfallLayout()
         super.init(collectionViewLayout: layout)
+
+        layout.estimatedColumnWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 2.0
     }
     
     @available(*, unavailable)
