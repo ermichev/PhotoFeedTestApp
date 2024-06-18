@@ -15,38 +15,59 @@ protocol FeedCollectionInteractorImplDeps {
 
 final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
     
+    // MARK: - Public nested types
+
     typealias Deps = FeedCollectionInteractorImplDeps
 
-    var state: AnyPublisher<PhotosFeedSessionState, Never> {
-        Just(.idle).eraseToAnyPublisher() // TODO: State
+    // MARK: - Public properties
+
+    var currentState: FeedViewState {
+        stateImpl.value
     }
 
-    var loadedItemsCount: AnyPublisher<Int, Never> {
-        loadedModels
-            .map { $0.count }
-            .eraseToAnyPublisher()
+    var stateUpdates: AnyPublisher<FeedViewState, Never> {
+        stateImpl.dropFirst().eraseToAnyPublisher()
     }
+
+    // MARK: - Constructors
 
     init(deps: Deps, pageSize: Int) {
         self.deps = deps
         self.session = deps.photosFeedService.feedSession(pageSize: pageSize)
 
-        session.photos
-            .subscribe(loadedModels)
+        session.state
+            .map { [weak self] sessionState -> FeedViewState in
+                guard let self else { return .notStarted }
+                let hasNextPage = session.hasNextPage
+
+                switch sessionState {
+                case (.notStarted, _):
+                    return .notStarted
+                case (.fetching, let photos):
+                    return .started(state: .fetching, fetched: .init(models: photos, hasNextPage: hasNextPage))
+                case (.idle, let photos):
+                    return .started(state: .idle, fetched: .init(models: photos, hasNextPage: hasNextPage))
+                case (.error, let photos):
+                    return .started(state: .error, fetched: .init(models: photos, hasNextPage: hasNextPage))
+                }
+            }
+            .subscribe(stateImpl)
             .store(in: &bag)
     }
 
+    // MARK: - Public methods
+
     func photoModel(for index: Int) -> PhotoModel? {
-        guard index < loadedModels.value.count else { return nil }
-        return loadedModels.value[index]
+        guard index < fetchedModels.count else { return nil }
+        return fetchedModels[index]
     }
 
     func fetchPhoto(with index: Int) -> AnyPublisher<UIImage, Error> {
-        guard index < loadedModels.value.count else {
+        guard index < fetchedModels.count else {
             return Fail(error: Errors.incorrectIndex).eraseToAnyPublisher()
         }
 
-        return deps.photoLoadingService.loadPhoto(loadedModels.value[index], size: .medium)
+        return deps.photoLoadingService.loadPhoto(fetchedModels[index], size: .medium)
     }
     
     func startFetching() {
@@ -61,11 +82,20 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
         session.clear()
         session.start()
     }
-    
+
+    // MARK: - Private properties
+
     private let deps: Deps
     private let session: PhotosFeedSession
 
-    private let loadedModels = CurrentValueSubject<[PhotoModel], Never>([])
+    private let stateImpl = CurrentValueSubject<FeedViewState, Never>(.notStarted)
     private var bag = Set<AnyCancellable>()
+
+    private var fetchedModels: [PhotoModel] {
+        switch stateImpl.value {
+        case .notStarted: []
+        case .started(_, let fetched): fetched.models
+        }
+    }
 
 }

@@ -7,16 +7,21 @@
 
 import Combine
 
-enum PhotosFeedSessionState {
+enum SessionLoadingState {
     case notStarted
     case fetching
     case idle
     case error
 }
 
+typealias PhotosFeedSessionState = (
+    loadingState: SessionLoadingState,
+    fetchedValues: [PhotoModel]
+)
+
 protocol PhotosFeedSession {
     var state: AnyPublisher<PhotosFeedSessionState, Never> { get }
-    var photos: AnyPublisher<[PhotoModel], Never> { get }
+    var hasNextPage: Bool { get }
     func start()
     func retry()
     func fetchNextPage()

@@ -73,12 +73,13 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
                     sizeForItemAt: indexPath
                 )
 
-                guard let itemSize, itemSize.height > 0.0, itemSize.width > 0.0 else {
-                    assertionFailure("In current use case item size must always be present.")
-                    continue
-                }
-
-                let itemHeight = floor(itemSize.height * itemWidth / itemSize.width)
+                let itemHeight: CGFloat = {
+                    if let itemSize, itemSize.height > 0.0, itemSize.width > 0.0 {
+                        floor(itemSize.height * itemWidth / itemSize.width)
+                    } else {
+                        0.0
+                    }
+                }()
 
                 attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
                 attributes.frame = CGRect(x: xOffset, y: yOffset, width: itemWidth, height: itemHeight)

@@ -16,49 +16,55 @@ class PhotosFeedServiceMock: PhotosFeedService {
 
 class PhotosFeedSessionMock: PhotosFeedSession {
    
+    // MARK: - Public properties
+
     var state: AnyPublisher<PhotosFeedSessionState, Never> {
         stateImpl.eraseToAnyPublisher()
     }
 
-    var photos: AnyPublisher<[PhotoModel], Never> {
-        photosImpl.eraseToAnyPublisher()
+    var hasNextPage: Bool {
+        Self.testPage?.nextPage != nil
     }
+
+    // MARK: - Constructors
 
     init() { }
 
-    func start() {
-        guard stateImpl.value == .notStarted else { return assertionFailure() }
+    // MARK: - Public methods
 
-        stateImpl.send(.fetching)
+    func start() {
+        guard stateImpl.value.loadingState == .notStarted else { return assertionFailure() }
+
+        stateImpl.send((.fetching, stateImpl.value.fetchedValues))
         dispatch(after: 1.0) { [weak self] in
             guard let self else { return }
-            photosImpl.send(Self.testPage?.photos ?? [])
-            stateImpl.send(.idle)
+            let newValues = stateImpl.value.fetchedValues + (Self.testPage?.photos ?? [])
+            stateImpl.send((.idle, newValues))
         }
     }
     
     func retry() {
-        guard stateImpl.value == .error else { return assertionFailure() }
+        guard stateImpl.value.loadingState == .error else { return assertionFailure() }
     }
     
     func fetchNextPage() {
-        guard stateImpl.value == .idle else { return assertionFailure() }
+        guard stateImpl.value.loadingState == .idle else { return assertionFailure() }
 
-        stateImpl.send(.fetching)
+        stateImpl.send((.fetching, stateImpl.value.fetchedValues))
         dispatch(after: 1.0) { [weak self] in
             guard let self else { return }
-            photosImpl.send(photosImpl.value + (Self.testPage?.photos ?? []))
-            stateImpl.send(.idle)
+            let newValues = stateImpl.value.fetchedValues + (Self.testPage?.photos ?? [])
+            stateImpl.send((.idle, newValues))
         }
     }
     
     func clear() {
-        photosImpl.send([])
-        stateImpl.send(.notStarted)
+        stateImpl.send((.notStarted, []))
     }
     
-    private var stateImpl = CurrentValueSubject<PhotosFeedSessionState, Never>(.notStarted)
-    private var photosImpl = CurrentValueSubject<[PhotoModel], Never>([])
+    // MARK: - Private properties
+
+    private var stateImpl = CurrentValueSubject<PhotosFeedSessionState, Never>((.notStarted, []))
 
     private static let testPage: PhotosPageModel? = {
         guard let path = Bundle.main.path(forResource: "test_page", ofType: "json") else { return nil }

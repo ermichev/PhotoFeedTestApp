@@ -12,18 +12,14 @@ protocol FeedCollectionViewControllerDeps:
     FeedCollectionInteractorImplDeps
 { }
 
-final class FeedCollectionViewController: UICollectionViewController {
+final class FeedCollectionViewController: UIViewController {
     
     typealias Deps = FeedCollectionViewControllerDeps
 
     init(deps: Deps) {
         let interactor = FeedCollectionInteractorImpl(deps: deps, pageSize: 20)
         self.viewModel = FeedCollectionViewModel(interactor: interactor)
-
-        let layout = FeedCollectionWaterfallLayout()
-        super.init(collectionViewLayout: layout)
-
-        layout.estimatedColumnWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 2.0
+        super.init(nibName: nil, bundle: nil)
     }
     
     @available(*, unavailable)
@@ -32,16 +28,29 @@ final class FeedCollectionViewController: UICollectionViewController {
     }
     
     override func viewDidLoad() {
-        collectionView.alwaysBounceVertical = true
+        let layout = FeedCollectionWaterfallLayout()
+        layout.estimatedColumnWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 2.0
 
-        viewModel.setup(for: collectionView)
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        self.collectionView = collection
+
+        view.addSubview(collection)
+        collection.alwaysBounceVertical = true
+
+        viewModel.setup(for: collection)
 
         viewModel.viewUpdateRequests
-            .sink { [weak self] in self?.collectionView.reloadData() }
+            .sink { [weak self] in self?.collectionView?.reloadData() }
             .store(in: &bag)
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView?.frame = view.bounds
+    }
+
     private let viewModel: FeedCollectionViewModel
+    private var collectionView: UICollectionView?
     private var bag = Set<AnyCancellable>()
 
 }
