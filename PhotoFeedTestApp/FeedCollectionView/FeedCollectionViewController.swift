@@ -36,6 +36,7 @@ final class FeedCollectionViewController: UIViewController {
 
         view.addSubview(collection)
         collection.alwaysBounceVertical = true
+        collection.backgroundColor = Colors.bg.primary.uiColor
 
         viewModel.setup(for: collection)
 

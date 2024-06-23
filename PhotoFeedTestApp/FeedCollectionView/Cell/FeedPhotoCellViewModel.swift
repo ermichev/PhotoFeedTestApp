@@ -12,7 +12,7 @@ final class PhotoCellViewModel {
 
     // MARK: - Public nested types
 
-    enum ViewState {
+    enum ImageState {
         case loading
         case image(UIImage)
         case error
@@ -20,29 +20,39 @@ final class PhotoCellViewModel {
 
     // MARK: - Public properties
 
-    var viewState: AnyPublisher<ViewState, Never> {
-        viewStateImpl.eraseToAnyPublisher()
+    let title: String?
+    let averageColor: UIColor?
+
+    var imageState: AnyPublisher<ImageState, Never> {
+        imageStateImpl.eraseToAnyPublisher()
     }
 
     // MARK: - Constructors
 
-    init(imageRequest: AnyPublisher<UIImage, Error>?) {
+    init(author: String?, averageColor: UIColor?, imageRequest: AnyPublisher<UIImage, Error>?) {
+        self.title = author
+        self.averageColor = averageColor
+
         imageRequest?
             .sink(
                 receiveCompletion: { [weak self] in
                     guard case .failure = $0 else { return }
-                    self?.viewStateImpl.send(.error)
+                    self?.imageStateImpl.send(.error)
                 },
                 receiveValue: { [weak self] in
-                    self?.viewStateImpl.send(.image($0))
+                    self?.imageStateImpl.send(.image($0))
                 }
             )
             .store(in: &bag)
     }
 
+    static func placeholder() -> Self {
+        Self.init(author: nil, averageColor: nil, imageRequest: nil)
+    }
+
     // MARK: - Public properties
 
-    private let viewStateImpl = CurrentValueSubject<ViewState, Never>(ViewState.loading)
+    private let imageStateImpl = CurrentValueSubject<ImageState, Never>(.loading)
     private var bag = Set<AnyCancellable>()
 
 }

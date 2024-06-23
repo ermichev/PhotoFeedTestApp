@@ -28,8 +28,7 @@ enum FeedViewState {
 protocol FeedCollectionInteractor {
     var currentState: FeedViewState { get }
     var stateUpdates: AnyPublisher<FeedViewState, Never> { get }
-    func photoModel(for index: Int) -> PhotoModel?
-    func fetchPhoto(with index: Int) -> AnyPublisher<UIImage, Error>
+    func fetchFeedPhoto(with index: Int) -> AnyPublisher<UIImage, Error>
     func startFetching()
     func fetchNextPage()
     func reload()
@@ -74,12 +73,12 @@ final class FeedCollectionViewModel: NSObject {
 
     private var bag = Set<AnyCancellable>()
 
-    private var numberOfLoadedPhotos: Int {
+    private var loadedPhotos: [PhotoModel] {
         switch interactor.currentState {
         case .notStarted:
-            0
+            []
         case .started(_, let loaded):
-            loaded.models.count
+            loaded.models
         }
     }
 
@@ -90,11 +89,11 @@ extension FeedCollectionViewModel: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch interactor.currentState {
         case .started(state: .error, _):
-            numberOfLoadedPhotos + 1 // Retry cell
+            loadedPhotos.count + 1 // Retry cell
         case .started(_, let loaded) where loaded.hasNextPage:
-            numberOfLoadedPhotos + Static.nextPagePlaceholdersCount
+            loadedPhotos.count + Static.nextPagePlaceholdersCount
         default:
-            numberOfLoadedPhotos
+            loadedPhotos.count
         }
     }
     
@@ -105,12 +104,15 @@ extension FeedCollectionViewModel: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Ids.photoCell, for: indexPath)
         guard let cell = cell as? FeedPhotoCellView else { assertionFailure(); return cell }
 
-        let cellViewModel = PhotoCellViewModel(
-            imageRequest: {
-                guard indexPath.item < numberOfLoadedPhotos else { return nil }
-                return interactor.fetchPhoto(with: indexPath.item)
-            }()
-        )
+        let cellViewModel = if let model = loadedPhotos[safe: indexPath.item] {
+            PhotoCellViewModel(
+                author: model.photographer.name,
+                averageColor: model.averageColor,
+                imageRequest: interactor.fetchFeedPhoto(with: indexPath.item)
+            )
+        } else {
+            PhotoCellViewModel.placeholder()
+        }
 
         cell.bind(to: cellViewModel)
         return cell
@@ -123,9 +125,9 @@ extension FeedCollectionViewModel: UICollectionViewDataSourcePrefetching {
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let greatestRequestedIndex = indexPaths.map { $0.item }.max() ?? 0
-        guard greatestRequestedIndex >= numberOfLoadedPhotos else { return }
-        itemsToPrefetchCount = greatestRequestedIndex + 1
-        prefetchPageIfNeeded()
+        guard greatestRequestedIndex >= loadedPhotos.count else { return }
+//        itemsToPrefetchCount = greatestRequestedIndex + 1
+//        prefetchPageIfNeeded()
     }
 
 }
@@ -137,7 +139,7 @@ extension FeedCollectionViewModel: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath) -> CGSize
     {
-        guard indexPath.item < numberOfLoadedPhotos else {
+        guard indexPath.item < loadedPhotos.count else {
             switch interactor.currentState {
             case .started(.error, _):
                 return .zero // TODO
@@ -146,7 +148,7 @@ extension FeedCollectionViewModel: UICollectionViewDelegateFlowLayout {
             }
         }
 
-        guard let model = interactor.photoModel(for: indexPath.item) else { return .zero }
+        let model = loadedPhotos[indexPath.item]
         return CGSize(width: CGFloat(model.size.width), height: CGFloat(model.size.height))
     }
 
@@ -167,7 +169,7 @@ private extension FeedCollectionViewModel {
     // MARK: - Private methods
 
     private func prefetchPageIfNeeded() {
-        guard numberOfLoadedPhotos < itemsToPrefetchCount else { return }
+        guard loadedPhotos.count < itemsToPrefetchCount else { return }
         guard !interactor.currentState.isFetching else { return }
 
         interactor.fetchNextPage()

@@ -57,12 +57,7 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
 
     // MARK: - Public methods
 
-    func photoModel(for index: Int) -> PhotoModel? {
-        guard index < fetchedModels.count else { return nil }
-        return fetchedModels[index]
-    }
-
-    func fetchPhoto(with index: Int) -> AnyPublisher<UIImage, Error> {
+    func fetchFeedPhoto(with index: Int) -> AnyPublisher<UIImage, Error> {
         guard index < fetchedModels.count else {
             return Fail(error: Errors.incorrectIndex).eraseToAnyPublisher()
         }
