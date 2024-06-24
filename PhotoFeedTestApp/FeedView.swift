@@ -38,11 +38,15 @@ struct FeedView: UIViewControllerRepresentable {
         }
 
         func showDetails(for model: PhotoModel, loadedPreview: UIImage?) {
-            parent.presentedPhotoDetails = PhotoDetailsInteractor(
+            let interactor = PhotoDetailsInteractor(
                 photoModel: model,
                 loadedLowRes: loadedPreview,
                 deps: parent.deps
             )
+            interactor?.onClose = { [weak self] in
+                self?.parent.presentedPhotoDetails = nil
+            }
+            parent.presentedPhotoDetails = interactor
         }
 
     }

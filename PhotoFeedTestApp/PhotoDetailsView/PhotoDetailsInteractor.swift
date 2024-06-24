@@ -32,6 +32,8 @@ final class PhotoDetailsInteractor {
         imageStateImpl.eraseToAnyPublisher()
     }
 
+    var onClose: (() -> Void)?
+
     init?(photoModel: PhotoModel, loadedLowRes: UIImage?, deps: Deps) {
         self.deps = deps
 
@@ -63,6 +65,10 @@ final class PhotoDetailsInteractor {
 
     func handleShowAuthorPage() {
         deps.safariViewControllerRouter.openUrl(authorUrl)
+    }
+
+    func handleCloseScreen() {
+        onClose?()
     }
 
     private let authorUrl: URL

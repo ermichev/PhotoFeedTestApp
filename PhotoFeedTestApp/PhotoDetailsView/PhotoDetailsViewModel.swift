@@ -27,6 +27,10 @@ final class PhotoDetailsViewModel: ObservableObject {
             .assign(to: &$imageState)
     }
 
+    func onCloseTap() {
+        interactor.handleCloseScreen()
+    }
+
     func onAuthorPageTap() {
         interactor.handleShowAuthorPage()
     }

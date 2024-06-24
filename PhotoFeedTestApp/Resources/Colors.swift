@@ -19,7 +19,8 @@ enum Colors {
     }
 
     enum fill {
-        static let primary = ColorHolder(.secondarySystemFill)
+        static let primary = ColorHolder(.systemFill)
+        static let secondary = ColorHolder(.secondarySystemFill)
     }
 
     static let shadow = ColorHolder(

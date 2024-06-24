@@ -52,7 +52,7 @@ final class FeedPhotoCellView: UICollectionViewCell {
         self.viewModel = viewModel
 
         authorLabel.text = viewModel.title
-        imageView.backgroundColor = viewModel.averageColor ?? Colors.fill.primary.uiColor
+        imageView.backgroundColor = viewModel.averageColor ?? Colors.fill.secondary.uiColor
 
         viewModel.imageState
             .receive(on: DispatchQueue.main)
@@ -107,7 +107,6 @@ private extension FeedPhotoCellView {
     }
 
     private enum Static {
-        static let roundedCornerImage = UIImage(named: "rounded_corner")
         static let cellBaseColor = Colors.bg.secondary.uiColor
     }
 
@@ -134,7 +133,7 @@ private extension FeedPhotoCellView {
         imageView.addSubview(loader)
 
         imageView.addSubview(retry)
-        retry.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
+        retry.setImage(Images.retry.uiImage, for: .normal)
         retry.setTitleColor(.secondaryLabel, for: .normal)
 
         // setup constraints
@@ -176,12 +175,12 @@ private extension FeedPhotoCellView {
         authorLabel.textColor = UIColor.label
 
         contentView.addSubview(authorLeftCorner)
-        authorLeftCorner.image = Static.roundedCornerImage?.withRenderingMode(.alwaysTemplate)
+        authorLeftCorner.image = Images.roundedCorner.uiImage.withRenderingMode(.alwaysTemplate)
         authorLeftCorner.tintColor = Static.cellBaseColor
         authorLeftCorner.transform = authorLeftCorner.transform.rotated(by: -.pi / 2.0)
 
         contentView.addSubview(authorTopCorner)
-        authorTopCorner.image = Static.roundedCornerImage?.withRenderingMode(.alwaysTemplate)
+        authorTopCorner.image = Images.roundedCorner.uiImage.withRenderingMode(.alwaysTemplate)
         authorTopCorner.tintColor = Static.cellBaseColor
         authorTopCorner.transform = authorTopCorner.transform.rotated(by: -.pi / 2.0)
 

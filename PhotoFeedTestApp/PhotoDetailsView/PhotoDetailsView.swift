@@ -16,20 +16,26 @@ struct PhotoDetailsView: View {
     var body: some View {
         if verticalSizeClass == .compact {
             // Phone in landscape
-            HStack {
-                imageContentView
-                    .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 16.0))
-                    .padding(16.0)
-                    .frame(maxHeight: .infinity)
-                VStack {
-                    Text(viewModel.author)
+            VStack(spacing: 0.0) {
+                closeButton
+
+                HStack {
+                    imageContentView
+                        .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 16.0))
+                        .padding(16.0)
+                        .frame(maxHeight: .infinity)
+                    VStack {
+                        Text(viewModel.author)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
             }
         } else {
             // Everything else
-            VStack {
+            VStack(spacing: 0.0) {
+                closeButton
+
                 imageContentView
                     .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 16.0))
@@ -53,6 +59,17 @@ struct PhotoDetailsView: View {
         }
     }
 
+    private var closeButton: some View {
+        Button(
+            action: { viewModel.onCloseTap() },
+            label: { Images.close.image.resizable() }
+        )
+        .foregroundStyle(Colors.fill.primary.color)
+        .frame(width: 24.0, height: 24.0)
+        .padding(16.0)
+        .frame(maxWidth: .infinity, alignment: .trailing)
+    }
+
     private var imageContentView: some View {
         Group {
             switch viewModel.imageState {
@@ -65,12 +82,12 @@ struct PhotoDetailsView: View {
             case .error(let image?):
                 ZStack {
                     Image(uiImage: image).resizable()
-                    Image(systemName: "arrow.clockwise")
+                    Images.retry.image
                 }
             case .error(nil):
                 ZStack {
                     Color(viewModel.imageAvgColor)
-                    Image(systemName: "arrow.clockwise")
+                    Images.retry.image
                 }
             }
         }

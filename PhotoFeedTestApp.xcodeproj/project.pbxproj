@@ -15,6 +15,7 @@
 		95414D882C294E62009A46A0 /* SafariViewControllerRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D872C294E62009A46A0 /* SafariViewControllerRouter.swift */; };
 		95414D922C2972C6009A46A0 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D912C2972C6009A46A0 /* Colors.swift */; };
 		95414D942C2987A1009A46A0 /* CommonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D932C2987A1009A46A0 /* CommonExtensions.swift */; };
+		95414D962C2998C6009A46A0 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D952C2998C6009A46A0 /* Images.swift */; };
 		956328212C1918370044457E /* FeedCollectionWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328202C1918370044457E /* FeedCollectionWaterfallLayout.swift */; };
 		956328232C1918430044457E /* FeedCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328222C1918430044457E /* FeedCollectionViewModel.swift */; };
 		956328252C191B040044457E /* FeedPhotoCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328242C191B040044457E /* FeedPhotoCellView.swift */; };
@@ -49,6 +50,7 @@
 		95414D872C294E62009A46A0 /* SafariViewControllerRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariViewControllerRouter.swift; sourceTree = "<group>"; };
 		95414D912C2972C6009A46A0 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		95414D932C2987A1009A46A0 /* CommonExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonExtensions.swift; sourceTree = "<group>"; };
+		95414D952C2998C6009A46A0 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		956328202C1918370044457E /* FeedCollectionWaterfallLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionWaterfallLayout.swift; sourceTree = "<group>"; };
 		956328222C1918430044457E /* FeedCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionViewModel.swift; sourceTree = "<group>"; };
 		956328242C191B040044457E /* FeedPhotoCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPhotoCellView.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			children = (
 				959802022C14974900DA8422 /* Assets.xcassets */,
 				95414D912C2972C6009A46A0 /* Colors.swift */,
+				95414D952C2998C6009A46A0 /* Images.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				959802192C160BE000DA8422 /* PhotosFeedService.swift in Sources */,
 				959802142C14A66000DA8422 /* UIColor+Hex.swift in Sources */,
 				956328272C191E2B0044457E /* Errors.swift in Sources */,
+				95414D962C2998C6009A46A0 /* Images.swift in Sources */,
 				959802202C161E2C00DA8422 /* PhotoLoadingService.swift in Sources */,
 				956328292C1920E70044457E /* FeedCollectionInteractor.swift in Sources */,
 				95414D882C294E62009A46A0 /* SafariViewControllerRouter.swift in Sources */,
