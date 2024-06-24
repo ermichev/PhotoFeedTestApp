@@ -55,6 +55,10 @@ final class FeedCollectionViewModel: NSObject {
             .eraseToAnyPublisher()
     }
 
+    var cellTaps: AnyPublisher<(PhotoModel, UIImage?), Never> {
+        cellTapsImpl.eraseToAnyPublisher()
+    }
+
     init(interactor: FeedCollectionInteractor) {
         self.interactor = interactor
     }
@@ -71,6 +75,7 @@ final class FeedCollectionViewModel: NSObject {
     private let interactor: FeedCollectionInteractor
     private var itemsToPrefetchCount: Int = 0
 
+    private var cellTapsImpl = PassthroughSubject<(PhotoModel, UIImage?), Never>()
     private var bag = Set<AnyCancellable>()
 
     private var loadedPhotos: [PhotoModel] {
@@ -128,6 +133,15 @@ extension FeedCollectionViewModel: UICollectionViewDataSourcePrefetching {
         guard greatestRequestedIndex >= loadedPhotos.count else { return }
 //        itemsToPrefetchCount = greatestRequestedIndex + 1
 //        prefetchPageIfNeeded()
+    }
+
+}
+
+extension FeedCollectionViewModel: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < loadedPhotos.count else { return }
+        cellTapsImpl.send((loadedPhotos[indexPath.item], nil)) // TODO: pass previews
     }
 
 }

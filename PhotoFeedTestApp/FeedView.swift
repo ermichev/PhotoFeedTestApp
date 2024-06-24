@@ -11,16 +11,44 @@ struct FeedView: UIViewControllerRepresentable {
     
     @Environment(\.applicationDeps) var deps
 
+    @Binding var presentedPhotoDetails: PhotoDetailsInteractor?
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
     func makeUIViewController(context: Context) -> FeedCollectionViewController {
-        FeedCollectionViewController(deps: deps)
+        let viewController = FeedCollectionViewController(deps: deps)
+        viewController.router = context.coordinator
+        context.coordinator.viewController = viewController
+        return viewController
     }
     
     func updateUIViewController(_ uiViewController: FeedCollectionViewController, context: Context) {
+        context.coordinator.viewController = uiViewController
+    }
+
+    class Coordinator: NSObject, PhotoDetailsRouter {
+
+        var parent: FeedView
+        weak var viewController: UIViewController?
+
+        init(_ parent: FeedView) {
+            self.parent = parent
+        }
+
+        func showDetails(for model: PhotoModel, loadedPreview: UIImage?) {
+            parent.presentedPhotoDetails = PhotoDetailsInteractor(
+                photoModel: model,
+                loadedLowRes: loadedPreview,
+                deps: parent.deps
+            )
+        }
 
     }
 
 }
 
 #Preview {
-    FeedView()
+    FeedView(presentedPhotoDetails: .constant(nil))
 }

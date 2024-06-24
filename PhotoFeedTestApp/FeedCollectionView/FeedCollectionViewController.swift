@@ -8,13 +8,19 @@
 import Combine
 import UIKit
 
+protocol PhotoDetailsRouter {
+    func showDetails(for model: PhotoModel, loadedPreview: UIImage?)
+}
+
 protocol FeedCollectionViewControllerDeps:
     FeedCollectionInteractorImplDeps
 { }
 
 final class FeedCollectionViewController: UIViewController {
-    
+
     typealias Deps = FeedCollectionViewControllerDeps
+
+    var router: PhotoDetailsRouter?
 
     init(deps: Deps) {
         let interactor = FeedCollectionInteractorImpl(deps: deps, pageSize: 20)
@@ -42,6 +48,10 @@ final class FeedCollectionViewController: UIViewController {
 
         viewModel.viewUpdateRequests
             .sink { [weak self] in self?.collectionView?.reloadData() }
+            .store(in: &bag)
+
+        viewModel.cellTaps
+            .sink { [weak self] in self?.router?.showDetails(for: $0, loadedPreview: $1) }
             .store(in: &bag)
     }
 

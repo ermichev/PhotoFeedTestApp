@@ -62,6 +62,12 @@ class PhotosFeedSessionMock: PhotosFeedSession {
         stateImpl.send((.notStarted, []))
     }
     
+    // -
+
+    class func mockPhotosPage() -> [PhotoModel] {
+        testPage?.photos ?? []
+    }
+
     // MARK: - Private properties
 
     private var stateImpl = CurrentValueSubject<PhotosFeedSessionState, Never>((.notStarted, []))

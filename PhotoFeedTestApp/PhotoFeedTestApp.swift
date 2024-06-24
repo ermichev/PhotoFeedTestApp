@@ -9,10 +9,11 @@ import SwiftUI
 
 @main
 struct PhotoFeedTestApp: App {
+
     var body: some Scene {
         WindowGroup {
-            FeedView()
-                .ignoresSafeArea(edges: .bottom)
+            RootView()
         }
     }
+
 }

@@ -10,10 +10,12 @@ import SDWebImage
 import SwiftUI
 
 final class ApplicationDeps:
-    FeedCollectionViewControllerDeps
+    FeedCollectionViewControllerDeps,
+    PhotoDetailsInteractorDeps
 {
     lazy var photosFeedService: PhotosFeedService = PhotosFeedServiceMock()
     lazy var photoLoadingService: PhotoLoadingService = SDWebImageManager.shared
+    lazy var safariViewControllerRouter: SafariViewControllerRouter = SafariViewControllerRouterImpl()
 }
 
 // -
