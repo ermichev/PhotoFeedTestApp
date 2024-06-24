@@ -125,14 +125,20 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        var begin = 0, end = unionRects.count
+        var begin = 0, end = allItemAttributes.count
 
+        // Faster search for groups of items intersecting given rect
         if let i = unionRects.firstIndex(where: { rect.intersects($0) }) {
             begin = i * unionSize
         }
         if let i = unionRects.lastIndex(where: { rect.intersects($0) }) {
             end = min((i + 1) * unionSize, allItemAttributes.count)
         }
+
+        // Add bordering rows just in case, becasue column height can be uneven
+        begin = max(0, begin - columnCount)
+        end = min(allItemAttributes.count, end + columnCount)
+
         return allItemAttributes[begin..<end]
             .filter { rect.intersects($0.frame) }
     }
