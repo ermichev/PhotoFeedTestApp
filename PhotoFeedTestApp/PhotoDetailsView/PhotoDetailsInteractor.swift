@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-enum PhotoDetailsImageState {
+enum PhotoDetailsImageState: Equatable {
     case loading
     case lowResImage(UIImage)
     case hiResImage(UIImage)
@@ -29,7 +29,7 @@ final class PhotoDetailsInteractor {
     let author: String
 
     var imageState: AnyPublisher<PhotoDetailsImageState, Never> {
-        imageStateImpl.eraseToAnyPublisher()
+        imageStateImpl.distinctValues()
     }
 
     var onClose: (() -> Void)?

@@ -16,44 +16,50 @@ struct PhotoDetailsView: View {
     var body: some View {
         if verticalSizeClass == .compact {
             // Phone in landscape
-            VStack(spacing: 0.0) {
-                closeButton
+            HStack(spacing: 0.0) {
+                imageContentView
+                    .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
+                    .clipShape(RoundedRectangle(cornerRadius: 16.0))
+                    .padding(.vertical, 16.0)
+                    .frame(maxHeight: .infinity)
 
-                HStack {
-                    imageContentView
-                        .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
-                        .clipShape(RoundedRectangle(cornerRadius: 16.0))
-                        .padding(16.0)
-                        .frame(maxHeight: .infinity)
-                    VStack {
-                        Text(viewModel.author)
-                    }
-                    .frame(maxWidth: .infinity)
+                VStack {
+                    Text(viewModel.author)
                 }
+                .frame(maxWidth: .infinity)
+
+                closeButton
+                    .frame(maxHeight: .infinity, alignment: .top)
             }
         } else {
             // Everything else
             VStack(spacing: 0.0) {
                 closeButton
+                    .frame(maxWidth: .infinity, alignment: .trailing)
 
                 imageContentView
                     .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 16.0))
-                    .padding(16.0)
+                    .padding(.horizontal, 16.0)
                     .frame(maxWidth: .infinity)
                     .layoutPriority(1)
-                VStack {
-                    HStack(spacing: 32.0) {
-                        Text(viewModel.author)
+
+                Spacer().frame(height: 32.0)
+
+                VStack(spacing: 8.0) {
+                    HStack(spacing: 8.0) {
+                        Text("Author:").font(.title2)
                         Button(
                             action: { viewModel.onAuthorPageTap() },
                             label: {
-                                Text("Open author page")
+                                (Text(viewModel.author + " ") + Text(Images.openExternal.image))
+                                    .font(.title2.bold())
                             }
                         )
+                        .foregroundStyle(Colors.text.primary.color)
                     }
                 }
-                .frame(maxHeight: .infinity)
+                .frame(maxHeight: .infinity, alignment: .top)
                 .layoutPriority(0)
             }
         }
@@ -67,7 +73,6 @@ struct PhotoDetailsView: View {
         .foregroundStyle(Colors.fill.primary.color)
         .frame(width: 24.0, height: 24.0)
         .padding(16.0)
-        .frame(maxWidth: .infinity, alignment: .trailing)
     }
 
     private var imageContentView: some View {

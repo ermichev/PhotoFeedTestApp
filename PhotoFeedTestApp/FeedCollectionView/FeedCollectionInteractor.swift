@@ -26,7 +26,7 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
     }
 
     var stateUpdates: AnyPublisher<FeedViewState, Never> {
-        stateImpl.dropFirst().eraseToAnyPublisher()
+        stateImpl.eraseToAnyPublisher()
     }
 
     // MARK: - Constructors

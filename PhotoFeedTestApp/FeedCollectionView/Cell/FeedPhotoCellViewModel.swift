@@ -12,7 +12,7 @@ final class PhotoCellViewModel {
 
     // MARK: - Public nested types
 
-    enum ImageState {
+    enum ImageState: Equatable {
         case loading
         case image(UIImage)
         case error
@@ -24,7 +24,7 @@ final class PhotoCellViewModel {
     let averageColor: UIColor?
 
     var imageState: AnyPublisher<ImageState, Never> {
-        imageStateImpl.eraseToAnyPublisher()
+        imageStateImpl.distinctValues()
     }
 
     // MARK: - Constructors

@@ -17,9 +17,10 @@ struct RootView: View {
                 onDismiss: { presentedDetails = nil },
                 content: {
                     if let presentedDetails {
-                        if #available(iOS 16.0, *) {
+                        if #available(iOS 16.4, *) {
                             PhotoDetailsView(viewModel: PhotoDetailsViewModel(interactor: presentedDetails))
                                 .presentationDetents([.large])
+                                .presentationCornerRadius(16.0)
                         } else {
                             PhotoDetailsView(viewModel: PhotoDetailsViewModel(interactor: presentedDetails))
                         }
