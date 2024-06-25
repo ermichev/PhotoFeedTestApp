@@ -122,7 +122,6 @@ extension FeedCollectionViewModel: UICollectionViewDataSource {
         cell.bind(to: cellViewModel)
         return cell
     }
-    
 
 }
 

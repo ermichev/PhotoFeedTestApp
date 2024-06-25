@@ -13,6 +13,13 @@ struct PhotoFeedTestApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .ignoresSafeArea(edges: .vertical)
+                .overlay(alignment: .top) {
+                    Color.clear
+                        .background(.regularMaterial)
+                        .ignoresSafeArea(edges: .top)
+                        .frame(height: 0.0)
+                }
         }
     }
 

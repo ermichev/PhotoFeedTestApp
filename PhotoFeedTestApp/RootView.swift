@@ -11,7 +11,6 @@ struct RootView: View {
 
     var body: some View {
         FeedCollectionView(presentedPhotoDetails: $presentedDetails)
-            .ignoresSafeArea(edges: .vertical)
             .background(Colors.bg.primary.color)
             .customSheet(interactor: $presentedDetails) { interactor in
                 if let interactor {

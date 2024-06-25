@@ -167,9 +167,9 @@
 			isa = PBXGroup;
 			children = (
 				95B3E2992C222E2900F7DE07 /* Cell */,
-				9598020D2C149D7C00DA8422 /* FeedCollectionViewController.swift */,
 				956328282C1920E70044457E /* FeedCollectionInteractor.swift */,
 				956328222C1918430044457E /* FeedCollectionViewModel.swift */,
+				9598020D2C149D7C00DA8422 /* FeedCollectionViewController.swift */,
 				959802002C14974300DA8422 /* FeedCollectionView.swift */,
 				956328202C1918370044457E /* FeedCollectionWaterfallLayout.swift */,
 			);

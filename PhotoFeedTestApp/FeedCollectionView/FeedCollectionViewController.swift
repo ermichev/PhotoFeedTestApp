@@ -41,6 +41,7 @@ final class FeedCollectionViewController: UIViewController {
         self.collectionView = collection
 
         view.addSubview(collection)
+        collection.contentInset.top = 16.0
         collection.alwaysBounceVertical = true
         collection.backgroundColor = Colors.bg.primary.uiColor
 
