@@ -17,6 +17,7 @@ enum FeedViewState {
         case idle
         case fetching
         case error
+        case refreshing /// Separate from fetching to indicate refresh control presence
     }
 
     struct FetchedPart {
@@ -69,11 +70,16 @@ final class FeedCollectionViewModel: NSObject {
         collectionView.prefetchDataSource = self
         collectionView.delegate = self
 
+        pullToRefreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        collectionView.refreshControl = pullToRefreshControl
+
         interactor.startFetching()
     }
 
     private let interactor: FeedCollectionInteractor
     private var itemsToPrefetchCount: Int = 0
+
+    private let pullToRefreshControl = UIRefreshControl()
 
     private var cellTapsImpl = PassthroughSubject<(PhotoModel, UIImage?), Never>()
     private var bag = Set<AnyCancellable>()
@@ -140,7 +146,8 @@ extension FeedCollectionViewModel: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard indexPath.item < loadedPhotos.count else { return }
-        cellTapsImpl.send((loadedPhotos[indexPath.item], nil)) // TODO: pass previews
+        cellTapsImpl.send((loadedPhotos[indexPath.item], nil)) 
+        // TODO: future enhancement: pass lowres image as placeholder to details screen
     }
 
 }
@@ -183,18 +190,18 @@ private extension FeedCollectionViewModel {
 
     private func prefetchPageIfNeeded() {
         guard loadedPhotos.count < itemsToPrefetchCount else { return }
-        guard !interactor.currentState.isFetching else { return }
+        guard !interactor.currentState.isLoading else { return }
 
         interactor.fetchNextPage()
         interactor.stateUpdates
-            .first { !$0.isFetching }
+            .first { !$0.isLoading }
             .sink { [weak self] state in
                 switch state {
                 case .started(.idle, _):
                     self?.prefetchPageIfNeeded()
                 case .started(.error, _):
                     self?.showErrorCell()
-                case .notStarted, .started(.fetching, _):
+                case .notStarted, .started(.fetching, _), .started(.refreshing, _):
                     assertionFailure("Unexpected state")
                 }
             }
@@ -203,6 +210,17 @@ private extension FeedCollectionViewModel {
 
     private func showErrorCell() {
         Logger.log.debug("TODO: show error")
+    }
+
+    @objc private func refresh() {
+        interactor.reload()
+
+        interactor.stateUpdates
+            .first { !$0.isLoading }
+            .sink { [weak self] _ in
+                self?.pullToRefreshControl.endRefreshing()
+            }
+            .store(in: &bag)
     }
 
     // -
@@ -219,9 +237,9 @@ private extension FeedCollectionViewModel {
 
 private extension FeedViewState {
 
-    var isFetching: Bool {
+    var isLoading: Bool {
         switch self {
-        case .started(.fetching, _): true
+        case .started(.fetching, _), .started(.refreshing, _): true
         default: false
         }
     }

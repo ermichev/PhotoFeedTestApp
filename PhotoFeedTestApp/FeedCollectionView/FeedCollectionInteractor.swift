@@ -39,6 +39,12 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
             .map { [weak self] sessionState -> FeedViewState in
                 guard let self else { return .notStarted }
                 let hasNextPage = session.hasNextPage
+                let loadingState = sessionState.loadingState
+
+                if let lastSessionModels, loadingState == .notStarted || loadingState == .fetching {
+                    // Keeping last session photos on the screen until refreshed content is arrived
+                    return .started(state: .refreshing, fetched: .init(models: lastSessionModels, hasNextPage: false))
+                }
 
                 switch sessionState {
                 case (.notStarted, _):
@@ -74,6 +80,7 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
     }
     
     func reload() {
+        lastSessionModels = fetchedModels
         session.clear()
         session.start()
     }
@@ -85,6 +92,8 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
 
     private let stateImpl = CurrentValueSubject<FeedViewState, Never>(.notStarted)
     private var bag = Set<AnyCancellable>()
+
+    private var lastSessionModels: [PhotoModel]? = nil
 
     private var fetchedModels: [PhotoModel] {
         switch stateImpl.value {
