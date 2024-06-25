@@ -45,6 +45,7 @@ final class PhotoDetailsViewModel: ObservableObject {
     let altText: String
 
     @Published var imageState: PhotoDetailsImageState = .loading
+    @Published var downloadState: PhotoDetailsDownloadState = .idle
 
     init(interactor: PhotoDetailsInteractor) {
         self.interactor = interactor
@@ -57,6 +58,10 @@ final class PhotoDetailsViewModel: ObservableObject {
         interactor.imageState
             .receive(on: RunLoop.main)
             .assign(to: &$imageState)
+
+        interactor.downloadState
+            .receive(on: RunLoop.main)
+            .assign(to: &$downloadState)
     }
 
     func onCloseTap() {
@@ -68,6 +73,7 @@ final class PhotoDetailsViewModel: ObservableObject {
     }
 
     func onDownloadFullTap() {
+        guard downloadState != .loading else { return }
         interactor.handleGetFullImage()
     }
 

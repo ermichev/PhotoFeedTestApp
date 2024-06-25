@@ -99,9 +99,20 @@ struct PhotoDetailsView: View {
                 ZStack {
                     Circle()
                         .foregroundStyle(Color.white.opacity(0.9))
-                    Images.download.image.resizable()
-                        .foregroundStyle(Color.accentColor)
-                        .padding(4.0)
+                    switch viewModel.downloadState {
+                    case .idle:
+                        Images.download.image.resizable()
+                            .foregroundStyle(Color.accentColor)
+                            .padding(4.0)
+                    case .loading:
+                        ProgressView()
+                            .preferredColorScheme(.light)
+                    case .error:
+                        Images.retry.image.resizable()
+                            .foregroundColor(Colors.error.color)
+                            .padding(4.0)
+                    }
+
                 }
                 .frame(width: 32.0, height: 32.0)
                 .padding(16.0)

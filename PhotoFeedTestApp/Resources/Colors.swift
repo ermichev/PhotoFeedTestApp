@@ -23,10 +23,8 @@ enum Colors {
         static let secondary = ColorHolder(.secondarySystemFill)
     }
 
-    static let shadow = ColorHolder(
-        light: .separator,
-        dark: .black
-    )
+    static let error = ColorHolder(.systemRed)
+    static let shadow = ColorHolder(light: .separator, dark: .black)
 
     enum label {
         static let primary = ColorHolder(.label)
