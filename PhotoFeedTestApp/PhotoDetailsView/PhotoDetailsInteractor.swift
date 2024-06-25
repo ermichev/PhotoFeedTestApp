@@ -8,11 +8,8 @@
 import Combine
 import UIKit
 
-enum PhotoDetailsImageState: Equatable {
-    case loading
-    case lowResImage(UIImage)
-    case hiResImage(UIImage)
-    case error(lowResImage: UIImage?)
+protocol SharingScreenRouter {
+    func shareImage(_ image: UIImage)
 }
 
 protocol PhotoDetailsInteractorDeps {
@@ -20,7 +17,7 @@ protocol PhotoDetailsInteractorDeps {
     var safariViewControllerRouter: SafariViewControllerRouter { get }
 }
 
-final class PhotoDetailsInteractor {
+final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
 
     typealias Deps = PhotoDetailsInteractorDeps
 

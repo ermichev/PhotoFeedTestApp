@@ -5,7 +5,37 @@
 //  Created by Alexander Ermichev on 24.06.2024.
 //
 
+import Combine
 import SwiftUI
+
+enum PhotoDetailsImageState: Equatable {
+    case loading
+    case lowResImage(UIImage)
+    case hiResImage(UIImage)
+    case error(lowResImage: UIImage?)
+}
+
+enum PhotoDetailsDownloadState: Equatable {
+    case idle
+    case loading
+    case error
+}
+
+protocol PhotoDetailsInteractor: AnyObject {
+    var imageAvgColor: UIColor { get }
+    var imageSize: (width: Int, height: Int) { get }
+    var author: String { get }
+    var altText: String { get }
+
+    var imageState: AnyPublisher<PhotoDetailsImageState, Never> { get }
+    var downloadState: AnyPublisher<PhotoDetailsDownloadState, Never> { get }
+
+    func handleGetFullImage()
+    func handleShowAuthorPage()
+    func handleCloseScreen()
+}
+
+// -
 
 final class PhotoDetailsViewModel: ObservableObject {
 

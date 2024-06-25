@@ -11,7 +11,7 @@ struct FeedView: UIViewControllerRepresentable {
     
     @Environment(\.applicationDeps) var deps
 
-    @Binding var presentedPhotoDetails: PhotoDetailsInteractor?
+    @Binding @EquatableStore var presentedPhotoDetails: PhotoDetailsInteractorImpl?
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -38,7 +38,7 @@ struct FeedView: UIViewControllerRepresentable {
         }
 
         func showDetails(for model: PhotoModel, loadedPreview: UIImage?) {
-            let interactor = PhotoDetailsInteractor(
+            let interactor = PhotoDetailsInteractorImpl(
                 photoModel: model,
                 loadedLowRes: loadedPreview,
                 deps: parent.deps
@@ -54,5 +54,5 @@ struct FeedView: UIViewControllerRepresentable {
 }
 
 #Preview {
-    FeedView(presentedPhotoDetails: .constant(nil))
+    FeedView(presentedPhotoDetails: .constant(.init(wrappedValue: nil)))
 }

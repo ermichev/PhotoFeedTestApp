@@ -11,28 +11,25 @@ struct RootView: View {
 
     var body: some View {
         FeedView(presentedPhotoDetails: $presentedDetails)
-            .ignoresSafeArea(edges: .bottom)
-            .sheet(
-                isPresented: isDetailsPresented,
-                onDismiss: { presentedDetails = nil },
-                content: {
-                    if let presentedDetails {
-                        if #available(iOS 16.4, *) {
-                            PhotoDetailsView(viewModel: PhotoDetailsViewModel(interactor: presentedDetails))
-                                .presentationDetents([.large])
-                                .presentationCornerRadius(16.0)
-                        } else {
-                            PhotoDetailsView(viewModel: PhotoDetailsViewModel(interactor: presentedDetails))
-                        }
+            .ignoresSafeArea(edges: .vertical)
+            .background(Colors.bg.primary.color)
+            .customSheet(interactor: $presentedDetails) { interactor in
+                if let interactor {
+                    if #available(iOS 16.4, *) {
+                        PhotoDetailsView(viewModel: PhotoDetailsViewModel(interactor: interactor))
+                            .presentationDetents([.large])
+                            .presentationDragIndicator(.visible)
+                            .presentationCornerRadius(16.0)
+                    } else {
+                        PhotoDetailsView(viewModel: PhotoDetailsViewModel(interactor: interactor))
                     }
                 }
-            )
+            }
     }
 
-    @State private var presentedDetails: PhotoDetailsInteractor?
-
-    private var isDetailsPresented: Binding<Bool> {
-        Binding<Bool>(get: { presentedDetails != nil }, set: { _ in presentedDetails = nil })
-    }
+    @State @EquatableStore private var presentedDetails: PhotoDetailsInteractorImpl?
 
 }
+
+
+
