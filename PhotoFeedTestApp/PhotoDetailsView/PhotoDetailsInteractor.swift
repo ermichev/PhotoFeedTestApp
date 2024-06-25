@@ -15,34 +15,33 @@ protocol SharingScreenRouter {
 protocol PhotoDetailsInteractorDeps {
     var photoLoadingService: PhotoLoadingService { get }
     var safariViewControllerRouter: SafariViewControllerRouter { get }
+    var sharingScreenRouter: SharingScreenRouter { get }
 }
 
 final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
 
     typealias Deps = PhotoDetailsInteractorDeps
 
-    let imageAvgColor: UIColor
-    let imageSize: (width: Int, height: Int)
-    let author: String
+    var imageAvgColor: UIColor { model.averageColor }
+    var imageSize: (width: Int, height: Int) { model.size }
+    var author: String { model.photographer.name }
+    var altText: String { model.altText }
 
     var imageState: AnyPublisher<PhotoDetailsImageState, Never> {
         imageStateImpl.distinctValues()
     }
 
+    var downloadState: AnyPublisher<PhotoDetailsDownloadState, Never> {
+        downloadStateImpl.distinctValues()
+    }
+
     var onClose: (() -> Void)?
 
-    init?(photoModel: PhotoModel, loadedLowRes: UIImage?, deps: Deps) {
+    init(photoModel: PhotoModel, loadedLowRes: UIImage?, deps: Deps) {
+        self.model = photoModel
         self.deps = deps
 
-        guard let originalImageUrl = photoModel.imageUrls[.original] else { return nil }
-
-        imageAvgColor = photoModel.averageColor
-        imageSize = photoModel.size
-
-        author = photoModel.photographer.name
-        authorUrl = photoModel.photographer.url
-        fullImageUrl = originalImageUrl
-
+        downloadStateImpl = .init(.idle)
         imageStateImpl = if let loadedLowRes {
             .init(.lowResImage(loadedLowRes))
         } else {
@@ -57,23 +56,38 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
     }
 
     func handleGetFullImage() {
-
+        downloadStateImpl.send(.loading)
+        deps.photoLoadingService.loadPhoto(model, size: .original)
+            .sink(
+                receiveCompletion: { [weak self] in
+                    switch $0 {
+                    case .failure:
+                        self?.downloadStateImpl.send(.error)
+                    case .finished:
+                        break
+                    }
+                }, 
+                receiveValue: { [weak self] in
+                    self?.downloadStateImpl.send(.idle)
+                    self?.deps.sharingScreenRouter.shareImage($0)
+                }
+            )
+            .store(in: &bag)
     }
 
     func handleShowAuthorPage() {
-        deps.safariViewControllerRouter.openUrl(authorUrl)
+        deps.safariViewControllerRouter.openUrl(model.photographer.url)
     }
 
     func handleCloseScreen() {
         onClose?()
     }
 
-    private let authorUrl: URL
-    private let fullImageUrl: URL
-
+    private let model: PhotoModel
     private let deps: Deps
 
     private let imageStateImpl: CurrentValueSubject<PhotoDetailsImageState, Never>
+    private let downloadStateImpl: CurrentValueSubject<PhotoDetailsDownloadState, Never>
     private var bag = Set<AnyCancellable>()
 
 }

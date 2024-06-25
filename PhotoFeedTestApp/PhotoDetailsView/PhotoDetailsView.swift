@@ -16,20 +16,21 @@ struct PhotoDetailsView: View {
     var body: some View {
         if verticalSizeClass == .compact {
             // Phone in landscape
-            HStack(spacing: 0.0) {
-                imageContentView
-                    .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 16.0))
-                    .padding(.vertical, 16.0)
-                    .frame(maxHeight: .infinity)
+            ZStack(alignment: .topTrailing) {
+                HStack(spacing: 16.0) {
+                    imageContentView
+                        .aspectRatio(viewModel.imageAspectRatio, contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 16.0))
+                        .padding(.vertical, 16.0)
+                        .frame(maxHeight: .infinity)
+                        .layoutPriority(1)
 
-                VStack {
-                    Text(viewModel.author)
+                    details
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .layoutPriority(0)
                 }
-                .frame(maxWidth: .infinity)
 
                 closeButton
-                    .frame(maxHeight: .infinity, alignment: .top)
             }
         } else {
             // Everything else
@@ -44,23 +45,12 @@ struct PhotoDetailsView: View {
                     .frame(maxWidth: .infinity)
                     .layoutPriority(1)
 
-                Spacer().frame(height: 32.0)
+                Spacer().frame(height: 16.0)
 
-                VStack(spacing: 8.0) {
-                    HStack(spacing: 8.0) {
-                        Text("Author:").font(.title2)
-                        Button(
-                            action: { viewModel.onAuthorPageTap() },
-                            label: {
-                                (Text(viewModel.author + " ") + Text(Images.openExternal.image))
-                                    .font(.title2.bold())
-                            }
-                        )
-                        .foregroundStyle(Colors.text.primary.color)
-                    }
-                }
-                .frame(maxHeight: .infinity, alignment: .top)
-                .layoutPriority(0)
+                details
+                    .padding(.horizontal, 16.0)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .layoutPriority(0)
             }
         }
     }
@@ -70,7 +60,7 @@ struct PhotoDetailsView: View {
             action: { viewModel.onCloseTap() },
             label: { Images.close.image.resizable() }
         )
-        .foregroundStyle(Colors.fill.primary.color)
+        .foregroundStyle(Colors.label.tertiary.color)
         .frame(width: 24.0, height: 24.0)
         .padding(16.0)
     }
@@ -79,11 +69,15 @@ struct PhotoDetailsView: View {
         Group {
             switch viewModel.imageState {
             case .loading:
-                Color(viewModel.imageAvgColor)
-            case .lowResImage(let uIImage):
-                Image(uiImage: uIImage).resizable()
-            case .hiResImage(let uIImage):
-                Image(uiImage: uIImage).resizable()
+                ZStack {
+                    Color(viewModel.imageAvgColor)
+                    ProgressView()
+                }
+            case .lowResImage(let uIImage), .hiResImage(let uIImage):
+                ZStack(alignment: .bottomTrailing) {
+                    Image(uiImage: uIImage).resizable()
+                    downloadButton
+                }
             case .error(let image?):
                 ZStack {
                     Image(uiImage: image).resizable()
@@ -96,6 +90,53 @@ struct PhotoDetailsView: View {
                 }
             }
         }
+    }
+
+    private var downloadButton: some View {
+        Button(
+            action: { viewModel.onDownloadFullTap() },
+            label: {
+                ZStack {
+                    Circle()
+                        .foregroundStyle(Color.white.opacity(0.9))
+                    Images.download.image.resizable()
+                        .foregroundStyle(Color.accentColor)
+                        .padding(4.0)
+                }
+                .frame(width: 32.0, height: 32.0)
+                .padding(16.0)
+            }
+        )
+    }
+
+    private var details: some View {
+        VStack(alignment: .leading, spacing: 24.0) {
+            author
+            if !viewModel.altText.isEmpty { altText }
+        }
+    }
+
+    private var author: some View {
+        HStack(spacing: 8.0) {
+            Text("Author:")
+                .font(.body)
+                .foregroundStyle(Colors.label.secondary.color)
+            Button(
+                action: { viewModel.onAuthorPageTap() },
+                label: {
+                    (Text(viewModel.author).underline() + Text(" ") + Text(Images.openExternal.image))
+                        .font(.body)
+                        .foregroundStyle(Color.accentColor)
+                }
+            )
+            .foregroundStyle(Colors.label.primary.color)
+        }
+    }
+
+    private var altText: some View {
+        Text(viewModel.altText)
+            .font(.body)
+            .foregroundStyle(Colors.label.secondary.color)
     }
 
 }

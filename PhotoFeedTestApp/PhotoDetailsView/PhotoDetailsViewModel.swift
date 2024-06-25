@@ -42,6 +42,7 @@ final class PhotoDetailsViewModel: ObservableObject {
     let imageAvgColor: UIColor
     let imageAspectRatio: CGFloat
     let author: String
+    let altText: String
 
     @Published var imageState: PhotoDetailsImageState = .loading
 
@@ -51,6 +52,7 @@ final class PhotoDetailsViewModel: ObservableObject {
         imageAvgColor = interactor.imageAvgColor
         imageAspectRatio = CGFloat(interactor.imageSize.width) / CGFloat(interactor.imageSize.height)
         author = interactor.author
+        altText = interactor.altText
 
         interactor.imageState
             .receive(on: RunLoop.main)
@@ -63,6 +65,10 @@ final class PhotoDetailsViewModel: ObservableObject {
 
     func onAuthorPageTap() {
         interactor.handleShowAuthorPage()
+    }
+
+    func onDownloadFullTap() {
+        interactor.handleGetFullImage()
     }
 
     private let interactor: PhotoDetailsInteractor

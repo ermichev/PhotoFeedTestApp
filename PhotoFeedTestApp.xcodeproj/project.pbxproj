@@ -16,6 +16,8 @@
 		95414D942C2987A1009A46A0 /* CommonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D932C2987A1009A46A0 /* CommonExtensions.swift */; };
 		95414D962C2998C6009A46A0 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D952C2998C6009A46A0 /* Images.swift */; };
 		95414D982C29B5DF009A46A0 /* CombineExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D972C29B5DF009A46A0 /* CombineExtension.swift */; };
+		95414D9A2C2A0128009A46A0 /* CustomModalSheetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D992C2A0128009A46A0 /* CustomModalSheetModifier.swift */; };
+		95414DA02C2B6A7A009A46A0 /* SharingScreenRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D9F2C2B6A7A009A46A0 /* SharingScreenRouter.swift */; };
 		956328212C1918370044457E /* FeedCollectionWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328202C1918370044457E /* FeedCollectionWaterfallLayout.swift */; };
 		956328232C1918430044457E /* FeedCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328222C1918430044457E /* FeedCollectionViewModel.swift */; };
 		956328252C191B040044457E /* FeedPhotoCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956328242C191B040044457E /* FeedPhotoCellView.swift */; };
@@ -51,6 +53,8 @@
 		95414D932C2987A1009A46A0 /* CommonExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonExtensions.swift; sourceTree = "<group>"; };
 		95414D952C2998C6009A46A0 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		95414D972C29B5DF009A46A0 /* CombineExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineExtension.swift; sourceTree = "<group>"; };
+		95414D992C2A0128009A46A0 /* CustomModalSheetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomModalSheetModifier.swift; sourceTree = "<group>"; };
+		95414D9F2C2B6A7A009A46A0 /* SharingScreenRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingScreenRouter.swift; sourceTree = "<group>"; };
 		956328202C1918370044457E /* FeedCollectionWaterfallLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionWaterfallLayout.swift; sourceTree = "<group>"; };
 		956328222C1918430044457E /* FeedCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionViewModel.swift; sourceTree = "<group>"; };
 		956328242C191B040044457E /* FeedPhotoCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPhotoCellView.swift; sourceTree = "<group>"; };
@@ -108,6 +112,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		95414D9E2C2B6A60009A46A0 /* Routers */ = {
+			isa = PBXGroup;
+			children = (
+				95414D872C294E62009A46A0 /* SafariViewControllerRouter.swift */,
+				95414D9F2C2B6A7A009A46A0 /* SharingScreenRouter.swift */,
+			);
+			path = Routers;
+			sourceTree = "<group>";
+		};
 		959801F22C14974300DA8422 = {
 			isa = PBXGroup;
 			children = (
@@ -133,9 +146,9 @@
 				959802002C14974300DA8422 /* FeedView.swift */,
 				9598020C2C149D5600DA8422 /* FeedCollectionView */,
 				95414D782C288CBF009A46A0 /* PhotoDetailsView */,
+				9598020F2C14A1D400DA8422 /* Models */,
 				959802172C160BCD00DA8422 /* Service */,
 				9598021C2C160D9800DA8422 /* Mocks */,
-				9598020F2C14A1D400DA8422 /* Models */,
 				959802122C14A63800DA8422 /* Helpers */,
 				95414D902C2972A8009A46A0 /* Resources */,
 				959802042C14974900DA8422 /* Preview Content */,
@@ -175,11 +188,12 @@
 		959802122C14A63800DA8422 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				95414D9E2C2B6A60009A46A0 /* Routers */,
 				959802132C14A66000DA8422 /* UIColor+Hex.swift */,
 				956328262C191E2B0044457E /* Errors.swift */,
 				95B3E28E2C203B1500F7DE07 /* Logger.swift */,
 				95B276672C2470B7003D4C64 /* RTLHelper.swift */,
-				95414D872C294E62009A46A0 /* SafariViewControllerRouter.swift */,
+				95414D992C2A0128009A46A0 /* CustomModalSheetModifier.swift */,
 				95414D932C2987A1009A46A0 /* CommonExtensions.swift */,
 				95414D972C29B5DF009A46A0 /* CombineExtension.swift */,
 			);
@@ -310,8 +324,10 @@
 				95414D7C2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift in Sources */,
 				95414D7E2C28E008009A46A0 /* PhotoDetailsViewModel.swift in Sources */,
 				956328232C1918430044457E /* FeedCollectionViewModel.swift in Sources */,
+				95414DA02C2B6A7A009A46A0 /* SharingScreenRouter.swift in Sources */,
 				959802192C160BE000DA8422 /* PhotosFeedService.swift in Sources */,
 				959802142C14A66000DA8422 /* UIColor+Hex.swift in Sources */,
+				95414D9A2C2A0128009A46A0 /* CustomModalSheetModifier.swift in Sources */,
 				956328272C191E2B0044457E /* Errors.swift in Sources */,
 				95414D962C2998C6009A46A0 /* Images.swift in Sources */,
 				959802202C161E2C00DA8422 /* PhotoLoadingService.swift in Sources */,

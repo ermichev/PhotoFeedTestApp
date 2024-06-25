@@ -28,8 +28,10 @@ enum Colors {
         dark: .black
     )
 
-    enum text {
+    enum label {
         static let primary = ColorHolder(.label)
+        static let secondary = ColorHolder(.secondaryLabel)
+        static let tertiary = ColorHolder(.tertiaryLabel)
     }
 
 }

@@ -43,7 +43,7 @@ struct FeedView: UIViewControllerRepresentable {
                 loadedLowRes: loadedPreview,
                 deps: parent.deps
             )
-            interactor?.onClose = { [weak self] in
+            interactor.onClose = { [weak self] in
                 self?.parent.presentedPhotoDetails = nil
             }
             parent.presentedPhotoDetails = interactor

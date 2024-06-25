@@ -12,7 +12,8 @@ enum Images {
     static let roundedCorner = ImageHolder(named: "rounded_corner")
     static let retry = ImageHolder(system: "arrow.clockwise")
     static let close = ImageHolder(system: "xmark.circle.fill")
-    static let openExternal = ImageHolder(system: "arrow.up.forward.app")
+    static let openExternal = ImageHolder(system: "arrow.up.right.square")
+    static let download = ImageHolder(system: "arrowshape.down.circle.fill")
 }
 
 // -
