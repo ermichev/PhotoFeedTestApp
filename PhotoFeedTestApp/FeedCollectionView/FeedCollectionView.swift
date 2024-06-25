@@ -1,5 +1,5 @@
 //
-//  FeedView.swift
+//  FeedCollectionView.swift
 //  PhotoFeedTestApp
 //
 //  Created by Alexander Ermichev on 08.06.2024.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct FeedView: UIViewControllerRepresentable {
-    
+struct FeedCollectionView: UIViewControllerRepresentable {
+
     @Environment(\.applicationDeps) var deps
 
     @Binding @EquatableStore var presentedPhotoDetails: PhotoDetailsInteractorImpl?
@@ -30,10 +30,10 @@ struct FeedView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, PhotoDetailsRouter {
 
-        var parent: FeedView
+        var parent: FeedCollectionView
         weak var viewController: UIViewController?
 
-        init(_ parent: FeedView) {
+        init(_ parent: FeedCollectionView) {
             self.parent = parent
         }
 
@@ -54,5 +54,5 @@ struct FeedView: UIViewControllerRepresentable {
 }
 
 #Preview {
-    FeedView(presentedPhotoDetails: .constant(.init(wrappedValue: nil)))
+    FeedCollectionView(presentedPhotoDetails: .constant(.init(wrappedValue: nil)))
 }

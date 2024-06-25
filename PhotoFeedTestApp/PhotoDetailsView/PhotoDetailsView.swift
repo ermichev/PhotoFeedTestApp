@@ -106,7 +106,7 @@ struct PhotoDetailsView: View {
                             .padding(4.0)
                     case .loading:
                         ProgressView()
-                            .preferredColorScheme(.light)
+                            .environment(\.colorScheme, .light)
                     case .error:
                         Images.retry.image.resizable()
                             .foregroundColor(Colors.error.color)

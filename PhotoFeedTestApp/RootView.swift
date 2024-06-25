@@ -10,7 +10,7 @@ import SwiftUI
 struct RootView: View {
 
     var body: some View {
-        FeedView(presentedPhotoDetails: $presentedDetails)
+        FeedCollectionView(presentedPhotoDetails: $presentedDetails)
             .ignoresSafeArea(edges: .vertical)
             .background(Colors.bg.primary.color)
             .customSheet(interactor: $presentedDetails) { interactor in
