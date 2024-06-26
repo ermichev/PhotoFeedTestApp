@@ -21,6 +21,10 @@ enum PhotoDetailsDownloadState: Equatable {
     case error
 }
 
+protocol PhotoDetailsInteractorDelegate {
+    func photoDetailsInteractorWillDismiss(_ interactor: PhotoDetailsInteractor)
+}
+
 protocol PhotoDetailsInteractor: AnyObject {
     var imageAvgColor: UIColor { get }
     var imageSize: (width: Int, height: Int) { get }
@@ -30,9 +34,11 @@ protocol PhotoDetailsInteractor: AnyObject {
     var imageState: AnyPublisher<PhotoDetailsImageState, Never> { get }
     var downloadState: AnyPublisher<PhotoDetailsDownloadState, Never> { get }
 
+    var delegate: PhotoDetailsInteractorDelegate? { get set }
+
     func handleGetFullImage()
     func handleShowAuthorPage()
-    func handleCloseScreen()
+    func onClose()
 }
 
 // -
@@ -65,7 +71,7 @@ final class PhotoDetailsViewModel: ObservableObject {
     }
 
     func onCloseTap() {
-        interactor.handleCloseScreen()
+        interactor.onClose()
     }
 
     func onAuthorPageTap() {

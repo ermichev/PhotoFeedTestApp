@@ -7,32 +7,39 @@
 
 import SwiftUI
 
+protocol SheetStateProvider: AnyObject {
+    func onClose()
+}
+
 extension View {
 
-    func customSheet<Interactor: AnyObject, V: View>(
-        interactor: Binding<EquatableStore<Interactor>>,
-        @ViewBuilder view: @escaping (Interactor?) -> V) -> some View
+    func customSheet<StateProvider: SheetStateProvider, V: View>(
+        stateProvider: Binding<EquatableStore<StateProvider>>,
+        @ViewBuilder view: @escaping (StateProvider?) -> V) -> some View
     {
-        modifier(CustomModalSheetModifier(interactor: interactor, viewFactory: view))
+        modifier(CustomModalSheetModifier(stateProvider: stateProvider, viewFactory: view))
     }
 
 }
 
-struct CustomModalSheetModifier<Interactor: AnyObject, V: View>: ViewModifier {
+struct CustomModalSheetModifier<StateProvider: SheetStateProvider, V: View>: ViewModifier {
     @State private var showSheet: Bool = false
-    @Binding @EquatableStore var interactor: Interactor?
+    @Binding @EquatableStore var stateProvider: StateProvider?
 
-    let viewFactory: (Interactor?) -> V
+    let viewFactory: (StateProvider?) -> V
 
     func body(content: Content) -> some View {
         content
-            .onChange(of: $interactor.wrappedValue) { value in
+            .onChange(of: $stateProvider.wrappedValue) { value in
                 showSheet = (value.wrappedValue != nil)
             }
             .sheet(
                 isPresented: $showSheet,
-                onDismiss: { interactor = nil },
-                content: { viewFactory(interactor) }
+                onDismiss: {
+                    stateProvider?.onClose()
+                    stateProvider = nil
+                },
+                content: { viewFactory(stateProvider) }
             )
     }
 }

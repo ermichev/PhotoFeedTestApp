@@ -9,10 +9,16 @@ import Combine
 import Foundation
 
 final class PhotosFeedServiceImpl: PhotosFeedService {
-    
-    func feedSession(pageSize: Int) -> PhotosFeedSession {
-        PhotosFeedSessionImpl(pageSize: 20, apiKey: "")
+
+    init(apiKey: String) {
+        self.apiKey = apiKey
     }
+
+    func feedSession(pageSize: Int) -> PhotosFeedSession {
+        PhotosFeedSessionImpl(pageSize: pageSize, apiKey: apiKey)
+    }
+
+    private let apiKey: String
 
 }
 

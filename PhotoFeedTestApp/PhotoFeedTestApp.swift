@@ -20,7 +20,10 @@ struct PhotoFeedTestApp: App {
                         .ignoresSafeArea(edges: .top)
                         .frame(height: 0.0)
                 }
+                .environmentObject(deps.appSettingsProvider.appSettings)
         }
     }
+
+    @Environment(\.applicationDeps) private var deps
 
 }

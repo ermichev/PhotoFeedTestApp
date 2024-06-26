@@ -9,7 +9,6 @@ import Combine
 import Foundation
 import UIKit
 
-
 protocol FeedCollectionInteractor {
     var currentState: FeedViewState { get }
     var stateUpdates: AnyPublisher<FeedViewState, Never> { get }
@@ -34,6 +33,8 @@ extension FeedCollectionInteractor {
 
 final class FeedCollectionViewModel: NSObject {
 
+    // MARK: - Public properties
+
     var viewUpdateRequests: AnyPublisher<Void, Never> {
         viewUpdateRequestsImpl.eraseToAnyPublisher()
     }
@@ -42,9 +43,13 @@ final class FeedCollectionViewModel: NSObject {
         cellTapsImpl.eraseToAnyPublisher()
     }
 
+    // MARK: - Constructors
+
     init(interactor: FeedCollectionInteractor) {
         self.interactor = interactor
     }
+
+    // MARK: - Public methods
 
     func setup(for collectionView: UICollectionView) {
         collectionView.register(FeedPhotoCellView.self, forCellWithReuseIdentifier: Ids.photoCell)
@@ -71,6 +76,8 @@ final class FeedCollectionViewModel: NSObject {
 
         interactor.startFetching()
     }
+
+    // MARK: - Private properties
 
     private let interactor: FeedCollectionInteractor
     private var itemsToPrefetchCount: Int = 0

@@ -12,9 +12,10 @@ struct FeedCollectionView: UIViewControllerRepresentable {
     @Environment(\.applicationDeps) var deps
 
     @Binding @EquatableStore var presentedPhotoDetails: PhotoDetailsInteractorImpl?
+    @Binding @EquatableStore var presentedSettings: AppSettingsViewModel?
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+    func makeCoordinator() -> FeedCollectionViewCoordinator {
+        FeedCollectionViewCoordinator(self)
     }
 
     func makeUIViewController(context: Context) -> FeedCollectionViewController {
@@ -28,31 +29,4 @@ struct FeedCollectionView: UIViewControllerRepresentable {
         context.coordinator.viewController = uiViewController
     }
 
-    class Coordinator: NSObject, PhotoDetailsRouter {
-
-        var parent: FeedCollectionView
-        weak var viewController: UIViewController?
-
-        init(_ parent: FeedCollectionView) {
-            self.parent = parent
-        }
-
-        func showDetails(for model: PhotoModel, loadedPreview: UIImage?) {
-            let interactor = PhotoDetailsInteractorImpl(
-                photoModel: model,
-                loadedLowRes: loadedPreview,
-                deps: parent.deps
-            )
-            interactor.onClose = { [weak self] in
-                self?.parent.presentedPhotoDetails = nil
-            }
-            parent.presentedPhotoDetails = interactor
-        }
-
-    }
-
-}
-
-#Preview {
-    FeedCollectionView(presentedPhotoDetails: .constant(.init(wrappedValue: nil)))
 }

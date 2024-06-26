@@ -18,9 +18,13 @@ protocol PhotoDetailsInteractorDeps {
     var sharingScreenRouter: SharingScreenRouter { get }
 }
 
-final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
+final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor, SheetStateProvider {
+
+    // MARK: - Public nested types
 
     typealias Deps = PhotoDetailsInteractorDeps
+
+    // MARK: - Public properties
 
     var imageAvgColor: UIColor { model.averageColor }
     var imageSize: (width: Int, height: Int) { model.size }
@@ -35,7 +39,9 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
         downloadStateImpl.distinctValues()
     }
 
-    var onClose: (() -> Void)?
+    var delegate: PhotoDetailsInteractorDelegate?
+
+    // MARK: - Constructors
 
     init(photoModel: PhotoModel, loadedLowRes: UIImage?, deps: Deps) {
         self.model = photoModel
@@ -54,6 +60,8 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
             .subscribe(imageStateImpl)
             .store(in: &bag)
     }
+
+    // MARK: - Public methods
 
     func handleGetFullImage() {
         downloadStateImpl.send(.loading)
@@ -79,9 +87,12 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor {
         deps.safariViewControllerRouter.openUrl(model.photographer.url)
     }
 
-    func handleCloseScreen() {
-        onClose?()
+    func onClose() {
+        Logger.log.debug("PhotoDetailsInteractorImpl.onClose")
+        delegate?.photoDetailsInteractorWillDismiss(self)
     }
+
+    // MARK: - Private properties
 
     private let model: PhotoModel
     private let deps: Deps

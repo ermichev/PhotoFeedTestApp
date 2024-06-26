@@ -30,12 +30,12 @@ struct PhotoDetailsView: View {
                         .layoutPriority(0)
                 }
 
-                closeButton
+                CloseButtonView { viewModel.onCloseTap() }
             }
         } else {
             // Everything else
             VStack(spacing: 0.0) {
-                closeButton
+                CloseButtonView { viewModel.onCloseTap() }
                     .frame(maxWidth: .infinity, alignment: .trailing)
 
                 imageContentView
@@ -53,16 +53,6 @@ struct PhotoDetailsView: View {
                     .layoutPriority(0)
             }
         }
-    }
-
-    private var closeButton: some View {
-        Button(
-            action: { viewModel.onCloseTap() },
-            label: { Images.close.image.resizable() }
-        )
-        .foregroundStyle(Colors.label.tertiary.color)
-        .frame(width: 24.0, height: 24.0)
-        .padding(16.0)
     }
 
     private var imageContentView: some View {

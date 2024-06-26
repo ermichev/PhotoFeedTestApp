@@ -10,7 +10,7 @@ import Foundation
 
 class PhotosFeedServiceMock: PhotosFeedService {
     func feedSession(pageSize: Int) -> PhotosFeedSession {
-        PhotosFeedSessionMock()
+        PhotosFeedSessionMock(pageSize: pageSize)
     }
 }
 
@@ -28,7 +28,9 @@ class PhotosFeedSessionMock: PhotosFeedSession {
 
     // MARK: - Constructors
 
-    init() { }
+    init(pageSize: Int) { 
+        self.pageSize = pageSize
+    }
 
     // MARK: - Public methods
 
@@ -38,8 +40,8 @@ class PhotosFeedSessionMock: PhotosFeedSession {
         stateImpl.send((.fetching, stateImpl.value.fetchedValues))
         dispatch(after: 1.0) { [weak self] in
             guard let self else { return }
-            let newValues = stateImpl.value.fetchedValues + (Self.testPage?.photos ?? [])
-            stateImpl.send((.idle, newValues))
+            let newValues = Self.testPage?.photos.prefix(pageSize) ?? []
+            stateImpl.send((.idle, stateImpl.value.fetchedValues + newValues))
         }
     }
     
@@ -53,8 +55,8 @@ class PhotosFeedSessionMock: PhotosFeedSession {
         stateImpl.send((.fetching, stateImpl.value.fetchedValues))
         dispatch(after: 1.0) { [weak self] in
             guard let self else { return }
-            let newValues = stateImpl.value.fetchedValues + (Self.testPage?.photos ?? [])
-            stateImpl.send((.idle, newValues))
+            let newValues = Self.testPage?.photos.prefix(pageSize) ?? []
+            stateImpl.send((.idle, stateImpl.value.fetchedValues + newValues))
         }
     }
     
@@ -70,6 +72,7 @@ class PhotosFeedSessionMock: PhotosFeedSession {
 
     // MARK: - Private properties
 
+    private let pageSize: Int
     private var stateImpl = CurrentValueSubject<PhotosFeedSessionState, Never>((.notStarted, []))
 
     private static let testPage: PhotosPageModel? = {
