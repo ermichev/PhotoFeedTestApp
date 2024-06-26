@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		950059CE2C2B801C002EA1B8 /* PhotosFeedServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950059CD2C2B801C002EA1B8 /* PhotosFeedServiceImpl.swift */; };
+		950059D02C2BC778002EA1B8 /* FeedViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950059CF2C2BC778002EA1B8 /* FeedViewState.swift */; };
 		95414D7C2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D7B2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift */; };
 		95414D7E2C28E008009A46A0 /* PhotoDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D7D2C28E008009A46A0 /* PhotoDetailsViewModel.swift */; };
 		95414D802C28E012009A46A0 /* PhotoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D7F2C28E012009A46A0 /* PhotoDetailsView.swift */; };
@@ -44,6 +46,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		950059CD2C2B801C002EA1B8 /* PhotosFeedServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosFeedServiceImpl.swift; sourceTree = "<group>"; };
+		950059CF2C2BC778002EA1B8 /* FeedViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewState.swift; sourceTree = "<group>"; };
 		95414D7B2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsInteractor.swift; sourceTree = "<group>"; };
 		95414D7D2C28E008009A46A0 /* PhotoDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsViewModel.swift; sourceTree = "<group>"; };
 		95414D7F2C28E012009A46A0 /* PhotoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsView.swift; sourceTree = "<group>"; };
@@ -167,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				95B3E2992C222E2900F7DE07 /* Cell */,
+				950059CF2C2BC778002EA1B8 /* FeedViewState.swift */,
 				956328282C1920E70044457E /* FeedCollectionInteractor.swift */,
 				956328222C1918430044457E /* FeedCollectionViewModel.swift */,
 				9598020D2C149D7C00DA8422 /* FeedCollectionViewController.swift */,
@@ -205,6 +210,7 @@
 			children = (
 				959802182C160BE000DA8422 /* PhotosFeedService.swift */,
 				9598021F2C161E2C00DA8422 /* PhotoLoadingService.swift */,
+				950059CD2C2B801C002EA1B8 /* PhotosFeedServiceImpl.swift */,
 				9563282D2C1CF71F0044457E /* SDWebImageManager+PhotoLoadingService.swift */,
 			);
 			path = Service;
@@ -311,6 +317,7 @@
 				95414D982C29B5DF009A46A0 /* CombineExtension.swift in Sources */,
 				956328212C1918370044457E /* FeedCollectionWaterfallLayout.swift in Sources */,
 				9563282E2C1CF7200044457E /* SDWebImageManager+PhotoLoadingService.swift in Sources */,
+				950059CE2C2B801C002EA1B8 /* PhotosFeedServiceImpl.swift in Sources */,
 				956328252C191B040044457E /* FeedPhotoCellView.swift in Sources */,
 				959802222C161EF200DA8422 /* ApplicationDeps.swift in Sources */,
 				9598021B2C160CF400DA8422 /* PhotosFeedServiceMock.swift in Sources */,
@@ -334,6 +341,7 @@
 				956328292C1920E70044457E /* FeedCollectionInteractor.swift in Sources */,
 				95414D882C294E62009A46A0 /* SafariViewControllerRouter.swift in Sources */,
 				95414D802C28E012009A46A0 /* PhotoDetailsView.swift in Sources */,
+				950059D02C2BC778002EA1B8 /* FeedViewState.swift in Sources */,
 				95414D842C28F4FF009A46A0 /* RootView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

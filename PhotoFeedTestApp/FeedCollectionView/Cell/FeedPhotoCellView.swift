@@ -42,8 +42,14 @@ final class FeedPhotoCellView: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        viewModel = nil
         bag.removeAll()
+        
         imageView.image = nil
+        imageView.backgroundColor = Colors.fill.secondary.uiColor
+        setAuthorLabelVisible(false)
+        retry.isHidden = true
+        loader.stopAnimating()
     }
 
     // -
@@ -55,24 +61,25 @@ final class FeedPhotoCellView: UICollectionViewCell {
         imageView.backgroundColor = viewModel.averageColor ?? Colors.fill.secondary.uiColor
 
         viewModel.imageState
-            .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] state in
+                guard let self else { return }
+
                 switch state {
                 case .loading:
-                    self?.imageView.image = nil
-                    self?.loader.startAnimating()
-                    self?.retry.isHidden = true
-                    self?.setAuthorLabelVisible(false)
+                    imageView.image = nil
+                    loader.startAnimating()
+                    retry.isHidden = true
+                    setAuthorLabelVisible(false)
                 case .image(let image):
-                    self?.imageView.image = image
-                    self?.loader.stopAnimating()
-                    self?.retry.isHidden = true
-                    self?.setAuthorLabelVisible(true)
+                    imageView.image = image
+                    loader.stopAnimating()
+                    retry.isHidden = true
+                    setAuthorLabelVisible(true)
                 case .error:
-                    self?.imageView.image = nil
-                    self?.loader.stopAnimating()
-                    self?.retry.isHidden = false
-                    self?.setAuthorLabelVisible(false)
+                    imageView.image = nil
+                    loader.stopAnimating()
+                    retry.isHidden = false
+                    setAuthorLabelVisible(false)
                 }
             })
             .store(in: &bag)

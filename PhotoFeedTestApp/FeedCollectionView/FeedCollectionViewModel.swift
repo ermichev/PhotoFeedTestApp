@@ -9,22 +9,6 @@ import Combine
 import Foundation
 import UIKit
 
-enum FeedViewState {
-    case notStarted
-    case started(state: LoadingState, fetched: FetchedPart)
-
-    enum LoadingState {
-        case idle
-        case fetching
-        case error
-        case refreshing /// Separate from fetching to indicate refresh control presence
-    }
-
-    struct FetchedPart {
-        let models: [PhotoModel]
-        let hasNextPage: Bool
-    }
-}
 
 protocol FeedCollectionInteractor {
     var currentState: FeedViewState { get }
@@ -51,9 +35,7 @@ extension FeedCollectionInteractor {
 final class FeedCollectionViewModel: NSObject {
 
     var viewUpdateRequests: AnyPublisher<Void, Never> {
-        interactor.stateUpdates
-            .map { _ in }
-            .eraseToAnyPublisher()
+        viewUpdateRequestsImpl.eraseToAnyPublisher()
     }
 
     var cellTaps: AnyPublisher<(PhotoModel, UIImage?), Never> {
@@ -73,6 +55,20 @@ final class FeedCollectionViewModel: NSObject {
         pullToRefreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         collectionView.refreshControl = pullToRefreshControl
 
+        Publishers
+            .Zip(interactor.stateUpdates.dropFirst(), interactor.stateUpdates)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] current, prev in
+                switch current {
+                case .started(.idle, _):
+                    self?.updateCells(dropCachedCells: prev.isRefreshing)
+                    self?.viewUpdateRequestsImpl.send(())
+                default:
+                    self?.viewUpdateRequestsImpl.send(())
+                }
+            }
+            .store(in: &bag)
+
         interactor.startFetching()
     }
 
@@ -81,8 +77,11 @@ final class FeedCollectionViewModel: NSObject {
 
     private let pullToRefreshControl = UIRefreshControl()
 
+    private var viewUpdateRequestsImpl = PassthroughSubject<Void, Never>()
     private var cellTapsImpl = PassthroughSubject<(PhotoModel, UIImage?), Never>()
     private var bag = Set<AnyCancellable>()
+
+    private var cellViewModels: [PhotoCellViewModel] = []
 
     private var loadedPhotos: [PhotoModel] {
         switch interactor.currentState {
@@ -115,17 +114,9 @@ extension FeedCollectionViewModel: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Ids.photoCell, for: indexPath)
         guard let cell = cell as? FeedPhotoCellView else { assertionFailure(); return cell }
 
-        let cellViewModel = if let model = loadedPhotos[safe: indexPath.item] {
-            PhotoCellViewModel(
-                author: model.photographer.name,
-                averageColor: model.averageColor,
-                imageRequest: interactor.fetchFeedPhoto(with: indexPath.item)
-            )
-        } else {
-            PhotoCellViewModel.placeholder()
-        }
-
-        cell.bind(to: cellViewModel)
+        let viewModel = cellViewModels[safe: indexPath.item] ?? PhotoCellViewModel.placeholder()
+        
+        cell.bind(to: viewModel)
         return cell
     }
 
@@ -136,8 +127,8 @@ extension FeedCollectionViewModel: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let greatestRequestedIndex = indexPaths.map { $0.item }.max() ?? 0
         guard greatestRequestedIndex >= loadedPhotos.count else { return }
-//        itemsToPrefetchCount = greatestRequestedIndex + 1
-//        prefetchPageIfNeeded()
+        itemsToPrefetchCount = greatestRequestedIndex + 1
+        prefetchPageIfNeeded()
     }
 
 }
@@ -208,6 +199,27 @@ private extension FeedCollectionViewModel {
             .store(in: &bag)
     }
 
+    private func updateCells(dropCachedCells: Bool) {
+        if dropCachedCells {
+            cellViewModels = []
+            itemsToPrefetchCount = 0
+        }
+
+        let currentCellsCount = cellViewModels.count
+        let currentModelsCount = loadedPhotos.count
+
+        for index in currentCellsCount..<currentModelsCount {
+            let model = loadedPhotos[index]
+            cellViewModels.append(
+                PhotoCellViewModel(
+                    author: model.photographer.name,
+                    averageColor: model.averageColor,
+                    imageRequest: interactor.fetchFeedPhoto(with: index)
+                )
+            )
+        }
+    }
+
     private func showErrorCell() {
         Logger.log.debug("TODO: show error")
     }
@@ -217,6 +229,7 @@ private extension FeedCollectionViewModel {
 
         interactor.stateUpdates
             .first { !$0.isLoading }
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.pullToRefreshControl.endRefreshing()
             }
@@ -230,17 +243,6 @@ private extension FeedCollectionViewModel {
         case 1: CGSize(width: 1.0, height: 1.5)
         case 2: CGSize(width: 1.5, height: 1.0)
         default: CGSize(width: 1.0, height: 1.0)
-        }
-    }
-
-}
-
-private extension FeedViewState {
-
-    var isLoading: Bool {
-        switch self {
-        case .started(.fetching, _), .started(.refreshing, _): true
-        default: false
         }
     }
 

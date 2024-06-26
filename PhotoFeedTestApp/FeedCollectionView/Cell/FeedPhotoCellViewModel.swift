@@ -34,6 +34,7 @@ final class PhotoCellViewModel {
         self.averageColor = averageColor
 
         imageRequest?
+            .receive(on: RunLoop.main)
             .sink(
                 receiveCompletion: { [weak self] in
                     guard case .failure = $0 else { return }

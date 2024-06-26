@@ -36,28 +36,7 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
         self.session = deps.photosFeedService.feedSession(pageSize: pageSize)
 
         session.state
-            .map { [weak self] sessionState -> FeedViewState in
-                guard let self else { return .notStarted }
-                let hasNextPage = session.hasNextPage
-                let loadingState = sessionState.loadingState
-
-                if let lastSessionModels, loadingState == .notStarted || loadingState == .fetching {
-                    // Keeping last session photos on the screen until refreshed content is arrived
-                    return .started(state: .refreshing, fetched: .init(models: lastSessionModels, hasNextPage: false))
-                }
-
-                switch sessionState {
-                case (.notStarted, _):
-                    return .notStarted
-                case (.fetching, let photos):
-                    return .started(state: .fetching, fetched: .init(models: photos, hasNextPage: hasNextPage))
-                case (.idle, let photos):
-                    return .started(state: .idle, fetched: .init(models: photos, hasNextPage: hasNextPage))
-                case (.error, let photos):
-                    return .started(state: .error, fetched: .init(models: photos, hasNextPage: hasNextPage))
-                }
-            }
-            .subscribe(stateImpl)
+            .sink { [weak self] in self?.updateFeedState(with: $0) }
             .store(in: &bag)
     }
 
@@ -99,6 +78,51 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
         switch stateImpl.value {
         case .notStarted: []
         case .started(_, let fetched): fetched.models
+        }
+    }
+
+}
+
+private extension FeedCollectionInteractorImpl {
+
+    // MARK: - Private methods
+
+    private func updateFeedState(with sessionState: PhotosFeedSessionState) {
+        let hasNextPage = session.hasNextPage
+        let loadingState = sessionState.loadingState
+
+        // Keeping last session photos on the screen until refreshed content is arrived
+        if let lastSessionModels {
+            if loadingState == .notStarted || loadingState == .fetching {
+                if !stateImpl.value.isRefreshing {
+                    stateImpl.send(
+                        .started(
+                            state: .refreshing,
+                            fetched: .init(models: lastSessionModels, hasNextPage: false)
+                        )
+                    )
+                }
+                return
+            } else {
+                self.lastSessionModels = nil
+            }
+        }
+
+        switch sessionState {
+        case (.notStarted, _):
+            stateImpl.send(.notStarted)
+        case (.fetching, let photos):
+            stateImpl.send(
+                .started(state: .fetching, fetched: .init(models: photos, hasNextPage: hasNextPage))
+            )
+        case (.idle, let photos):
+            stateImpl.send(
+                .started(state: .idle, fetched: .init(models: photos, hasNextPage: hasNextPage))
+            )
+        case (.error, let photos):
+            stateImpl.send(
+                .started(state: .error, fetched: .init(models: photos, hasNextPage: hasNextPage))
+            )
         }
     }
 

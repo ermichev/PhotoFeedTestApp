@@ -13,7 +13,7 @@ final class ApplicationDeps:
     FeedCollectionViewControllerDeps,
     PhotoDetailsInteractorDeps
 {
-    lazy var photosFeedService: PhotosFeedService = PhotosFeedServiceMock()
+    lazy var photosFeedService: PhotosFeedService = PhotosFeedServiceImpl()
     lazy var photoLoadingService: PhotoLoadingService = SDWebImageManager.shared
     lazy var safariViewControllerRouter: SafariViewControllerRouter = SafariViewControllerRouterImpl()
     lazy var sharingScreenRouter: SharingScreenRouter = SharingScreenRouterImpl()
