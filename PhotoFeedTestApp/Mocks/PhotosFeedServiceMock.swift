@@ -9,9 +9,17 @@ import Combine
 import Foundation
 
 class PhotosFeedServiceMock: PhotosFeedService {
-    func feedSession(pageSize: Int) -> PhotosFeedSession {
-        PhotosFeedSessionMock(pageSize: pageSize)
+
+    init(failHalfRequests: Bool) {
+        self.failHalfRequests = failHalfRequests
     }
+
+    func feedSession(pageSize: Int) -> PhotosFeedSession {
+        PhotosFeedSessionMock(pageSize: pageSize, failHalfRequests: failHalfRequests)
+    }
+
+    private let failHalfRequests: Bool
+
 }
 
 class PhotosFeedSessionMock: PhotosFeedSession {
@@ -28,42 +36,45 @@ class PhotosFeedSessionMock: PhotosFeedSession {
 
     // MARK: - Constructors
 
-    init(pageSize: Int) { 
+    init(pageSize: Int, failHalfRequests: Bool) {
         self.pageSize = pageSize
+        self.failHalfRequests = failHalfRequests
     }
 
     // MARK: - Public methods
 
     func start() {
         guard stateImpl.value.loadingState == .notStarted else { return assertionFailure() }
-
-        stateImpl.send((.fetching, stateImpl.value.fetchedValues))
-        dispatch(after: 1.0) { [weak self] in
-            guard let self else { return }
-            let newValues = Self.testPage?.photos.prefix(pageSize) ?? []
-            stateImpl.send((.idle, stateImpl.value.fetchedValues + newValues))
-        }
+        makeRequest(currentValues: [])
     }
     
     func retry() {
         guard stateImpl.value.loadingState == .error else { return assertionFailure() }
+        makeRequest(currentValues: stateImpl.value.fetchedValues)
     }
     
     func fetchNextPage() {
         guard stateImpl.value.loadingState == .idle else { return assertionFailure() }
+        makeRequest(currentValues: stateImpl.value.fetchedValues)
+    }
+    
+    func clearAndRestart() {
+        makeRequest(currentValues: [])
+    }
 
-        stateImpl.send((.fetching, stateImpl.value.fetchedValues))
+    private func makeRequest(currentValues: [PhotoModel]) {
+        stateImpl.send((.fetching, currentValues))
         dispatch(after: 1.0) { [weak self] in
             guard let self else { return }
-            let newValues = Self.testPage?.photos.prefix(pageSize) ?? []
-            stateImpl.send((.idle, stateImpl.value.fetchedValues + newValues))
+            if failHalfRequests && random.next() % 2 == 0 {
+                stateImpl.send((.error, currentValues))
+            } else {
+                let newValues = Self.testPage?.photos.prefix(pageSize) ?? []
+                stateImpl.send((.idle, currentValues + newValues))
+            }
         }
     }
-    
-    func clear() {
-        stateImpl.send((.notStarted, []))
-    }
-    
+
     // -
 
     class func mockPhotosPage() -> [PhotoModel] {
@@ -73,7 +84,11 @@ class PhotosFeedSessionMock: PhotosFeedSession {
     // MARK: - Private properties
 
     private let pageSize: Int
+    private let failHalfRequests: Bool
+
     private var stateImpl = CurrentValueSubject<PhotosFeedSessionState, Never>((.notStarted, []))
+
+    private var random = SystemRandomNumberGenerator()
 
     private static let testPage: PhotosPageModel? = {
         guard let path = Bundle.main.path(forResource: "test_page", ofType: "json") else { return nil }

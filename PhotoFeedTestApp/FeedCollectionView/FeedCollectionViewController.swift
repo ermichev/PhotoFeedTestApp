@@ -32,9 +32,12 @@ final class FeedCollectionViewController: UIViewController {
     // MARK: - Constructors
 
     init(deps: Deps) {
+        self.deps = deps
+
         let pageSize = deps.appSettingsProvider.appSettings.settings.pageSize
         let interactor = FeedCollectionInteractorImpl(deps: deps, pageSize: pageSize)
         self.viewModel = FeedCollectionViewModel(interactor: interactor)
+
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,7 +63,10 @@ final class FeedCollectionViewController: UIViewController {
         viewModel.setup(for: collection)
 
         viewModel.viewUpdateRequests
-            .sink { [weak self] in self?.collectionView?.reloadData() }
+            .sink { [weak self] in
+                self?.collectionView?.reloadData()
+                self?.triggerNextPageIfNeeded()
+            }
             .store(in: &bag)
 
         viewModel.cellTaps
@@ -98,6 +104,7 @@ final class FeedCollectionViewController: UIViewController {
 
     // MARK: - Private properties
 
+    private let deps: Deps
     private let viewModel: FeedCollectionViewModel
 
     private var collectionView: UICollectionView?
@@ -113,6 +120,25 @@ private extension FeedCollectionViewController {
 
     @objc private func settingsTap() {
         router?.showAppSettings()
+    }
+
+    // This is a dirty hack for an annoying problem I don't have time to deal properly.
+    // Basically, if first page of photos is smaller than screen size - prefetch for the next page will not be called
+    // until collection is scrolled. In all other cases fetching next page through `prefetchItemsAt` works as
+    // intended, so I just forcefully trigger prefetch for that specific case.
+
+    private func triggerNextPageIfNeeded() {
+        guard let collectionView else { return }
+        let viewHeight = collectionView.bounds.height
+        let maxContentItemIndexPath = IndexPath(item: viewModel.fetchedPhotoCellsCount - 1, section: 0)
+        let contentMaxY = collectionView.layoutAttributesForItem(at: maxContentItemIndexPath)?.frame.maxY ?? 0.0
+
+        if contentMaxY < viewHeight {
+            let pageSize = deps.appSettingsProvider.appSettings.settings.pageSize
+            let nextPageIndexPath = IndexPath(item: maxContentItemIndexPath.item + pageSize, section: 0)
+            Logger.log.debug("Forcing prefetch of item at \(nextPageIndexPath.item)")
+            viewModel.collectionView(collectionView, prefetchItemsAt: [nextPageIndexPath])
+        }
     }
 
 }

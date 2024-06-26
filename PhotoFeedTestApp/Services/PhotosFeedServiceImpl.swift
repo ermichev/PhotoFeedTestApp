@@ -48,22 +48,22 @@ final class PhotosFeedSessionImpl: PhotosFeedSession {
     func start() {
         guard stateImpl.value.loadingState == .notStarted else { return assertionFailure() }
         nextPageUrl = firstPageUrl
-        performPageRequest()
+        performPageRequest(currentValues: [])
     }
     
     func retry() {
         guard stateImpl.value.loadingState == .error else { return assertionFailure() }
-        performPageRequest()
+        performPageRequest(currentValues: stateImpl.value.fetchedValues)
     }
     
     func fetchNextPage() {
         guard stateImpl.value.loadingState == .idle else { return assertionFailure() }
-        performPageRequest()
+        performPageRequest(currentValues: stateImpl.value.fetchedValues)
     }
     
-    func clear() {
-        nextPageUrl = nil
-        stateImpl.send((.notStarted, []))
+    func clearAndRestart() {
+        nextPageUrl = firstPageUrl
+        performPageRequest(currentValues: [])
     }
 
     // MARK: - Private properties
@@ -80,7 +80,7 @@ private extension PhotosFeedSessionImpl {
 
     // MARK: - Private methods
 
-    private func performPageRequest() {
+    private func performPageRequest(currentValues: [PhotoModel]) {
         guard let requestURL = nextPageUrl else { return assertionFailure() }
 
         var request = URLRequest(url: requestURL)
@@ -94,13 +94,14 @@ private extension PhotosFeedSessionImpl {
                let pageModel = try? JSONDecoder().decode(PhotosPageModel.self, from: data)
             {
                 nextPageUrl = pageModel.nextPage
-                stateImpl.send((.idle, stateImpl.value.fetchedValues + pageModel.photos))
+                stateImpl.send((.idle, currentValues + pageModel.photos))
+                Logger.log.debug("Recieved photos: \(pageModel.photos.map {$0.id}), url: \(requestURL)")
             } else {
-                stateImpl.send((.error, stateImpl.value.fetchedValues))
+                stateImpl.send((.error, currentValues))
             }
         }
 
-        stateImpl.send((.fetching, stateImpl.value.fetchedValues))
+        stateImpl.send((.fetching, currentValues))
         task.resume()
     }
 

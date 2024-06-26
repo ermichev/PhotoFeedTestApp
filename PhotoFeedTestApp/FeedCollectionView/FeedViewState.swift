@@ -13,7 +13,6 @@ enum FeedViewState {
         case idle
         case fetching
         case error
-        case refreshing /// Separate from fetching to indicate refresh control presence
     }
 
     struct FetchedPart {
@@ -26,14 +25,21 @@ extension FeedViewState {
 
     var isLoading: Bool {
         switch self {
-        case .started(.fetching, _), .started(.refreshing, _): true
+        case .started(.fetching, _): true
         default: false
         }
     }
 
-    var isRefreshing: Bool {
+    var isError: Bool {
         switch self {
-        case .started(.refreshing, _): true
+        case .started(.error, _): true
+        default: false
+        }
+    }
+
+    var isNotStarted: Bool {
+        switch self {
+        case .notStarted: true
         default: false
         }
     }

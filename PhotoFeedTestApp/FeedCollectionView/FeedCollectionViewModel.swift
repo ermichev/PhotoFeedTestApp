@@ -13,9 +13,9 @@ protocol FeedCollectionInteractor {
     var currentState: FeedViewState { get }
     var stateUpdates: AnyPublisher<FeedViewState, Never> { get }
     func fetchFeedPhoto(with index: Int) -> AnyPublisher<UIImage, Error>
-    func startFetching()
     func fetchNextPage()
-    func reload()
+    func retry()
+    func clearAndRestart()
 }
 
 extension FeedCollectionInteractor {
@@ -43,6 +43,10 @@ final class FeedCollectionViewModel: NSObject {
         cellTapsImpl.eraseToAnyPublisher()
     }
 
+    var fetchedPhotoCellsCount: Int {
+        cellViewModels.count
+    }
+
     // MARK: - Constructors
 
     init(interactor: FeedCollectionInteractor) {
@@ -53,6 +57,7 @@ final class FeedCollectionViewModel: NSObject {
 
     func setup(for collectionView: UICollectionView) {
         collectionView.register(FeedPhotoCellView.self, forCellWithReuseIdentifier: Ids.photoCell)
+        collectionView.register(FeedErrorCellView.self, forCellWithReuseIdentifier: Ids.errorCell)
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         collectionView.delegate = self
@@ -60,21 +65,8 @@ final class FeedCollectionViewModel: NSObject {
         pullToRefreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         collectionView.refreshControl = pullToRefreshControl
 
-        Publishers
-            .Zip(interactor.stateUpdates.dropFirst(), interactor.stateUpdates)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] current, prev in
-                switch current {
-                case .started(.idle, _):
-                    self?.updateCells(dropCachedCells: prev.isRefreshing)
-                    self?.viewUpdateRequestsImpl.send(())
-                default:
-                    self?.viewUpdateRequestsImpl.send(())
-                }
-            }
-            .store(in: &bag)
-
-        interactor.startFetching()
+        subscribeToStateUpdates()
+        interactor.fetchNextPage()
     }
 
     // MARK: - Private properties
@@ -118,13 +110,23 @@ extension FeedCollectionViewModel: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Ids.photoCell, for: indexPath)
-        guard let cell = cell as? FeedPhotoCellView else { assertionFailure(); return cell }
+        if interactor.currentState.isError && indexPath.item == loadedPhotos.count {
+            // Error cell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Ids.errorCell, for: indexPath)
+            guard let cell = cell as? FeedErrorCellView else { assertionFailure(); return cell }
 
-        let viewModel = cellViewModels[safe: indexPath.item] ?? PhotoCellViewModel.placeholder()
-        
-        cell.bind(to: viewModel)
-        return cell
+            cell.onRetryTap = { [weak self] in self?.interactor.retry() }
+            return cell
+        } else {
+            // Photo cell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Ids.photoCell, for: indexPath)
+            guard let cell = cell as? FeedPhotoCellView else { assertionFailure(); return cell }
+
+            let viewModel = cellViewModels[safe: indexPath.item] ?? PhotoCellViewModel.placeholder()
+
+            cell.bind(to: viewModel)
+            return cell
+        }
     }
 
 }
@@ -133,9 +135,9 @@ extension FeedCollectionViewModel: UICollectionViewDataSourcePrefetching {
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let greatestRequestedIndex = indexPaths.map { $0.item }.max() ?? 0
-        guard greatestRequestedIndex >= loadedPhotos.count else { return }
+        guard greatestRequestedIndex >= cellViewModels.count else { return }
         itemsToPrefetchCount = greatestRequestedIndex + 1
-        prefetchPageIfNeeded()
+        fetchPageIfNeeded()
     }
 
 }
@@ -160,7 +162,7 @@ extension FeedCollectionViewModel: UICollectionViewDelegateFlowLayout {
         guard indexPath.item < loadedPhotos.count else {
             switch interactor.currentState {
             case .started(.error, _):
-                return .zero // TODO
+                return .zero // TODO: Less janky way to indicate error cell in layout
             default:
                 return placeholderItemSizeAspect(for: indexPath)
             }
@@ -178,6 +180,7 @@ private extension FeedCollectionViewModel {
 
     private enum Ids {
         static let photoCell = "PhotoCell"
+        static let errorCell = "ErrorCell"
     }
 
     private enum Static {
@@ -186,34 +189,35 @@ private extension FeedCollectionViewModel {
 
     // MARK: - Private methods
 
-    private func prefetchPageIfNeeded() {
-        guard loadedPhotos.count < itemsToPrefetchCount else { return }
-        guard !interactor.currentState.isLoading else { return }
-
-        interactor.fetchNextPage()
+    private func subscribeToStateUpdates() {
         interactor.stateUpdates
-            .first { !$0.isLoading }
+            .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 switch state {
                 case .started(.idle, _):
-                    self?.prefetchPageIfNeeded()
-                case .started(.error, _):
-                    self?.showErrorCell()
-                case .notStarted, .started(.fetching, _), .started(.refreshing, _):
-                    assertionFailure("Unexpected state")
+                    self?.updateCells()
+                    self?.viewUpdateRequestsImpl.send(())
+                    self?.fetchPageIfNeeded()
+                case .notStarted, .started(.error, _), .started(.fetching, _):
+                    self?.viewUpdateRequestsImpl.send(())
                 }
             }
             .store(in: &bag)
     }
 
-    private func updateCells(dropCachedCells: Bool) {
-        if dropCachedCells {
-            cellViewModels = []
-            itemsToPrefetchCount = 0
-        }
+    private func fetchPageIfNeeded() {
+        guard cellViewModels.count < itemsToPrefetchCount else { return }
+        guard !interactor.currentState.isLoading else { return }
+        guard !interactor.currentState.isError else { return }
 
+        interactor.fetchNextPage()
+    }
+
+    private func updateCells() {
         let currentCellsCount = cellViewModels.count
         let currentModelsCount = loadedPhotos.count
+
+        guard currentCellsCount < currentModelsCount else { return }
 
         for index in currentCellsCount..<currentModelsCount {
             let model = loadedPhotos[index]
@@ -227,12 +231,11 @@ private extension FeedCollectionViewModel {
         }
     }
 
-    private func showErrorCell() {
-        Logger.log.debug("TODO: show error")
-    }
-
     @objc private func refresh() {
-        interactor.reload()
+        cellViewModels = []
+        itemsToPrefetchCount = 0
+
+        interactor.clearAndRestart()
 
         interactor.stateUpdates
             .first { !$0.isLoading }

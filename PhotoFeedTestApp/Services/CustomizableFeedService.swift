@@ -37,7 +37,7 @@ private extension CustomizableFeedService {
 
     private static func makeService(for settings: AppSettingsModel) -> PhotosFeedService {
         if settings.mockServiceEnabled {
-            PhotosFeedServiceMock()
+            PhotosFeedServiceMock(failHalfRequests: settings.mockServiceFailHalfRequests)
         } else {
             PhotosFeedServiceImpl(apiKey: settings.apiKey)
         }

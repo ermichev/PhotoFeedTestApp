@@ -141,7 +141,7 @@ private extension FeedPhotoCellView {
 
         imageView.addSubview(retry)
         retry.setImage(Images.retry.uiImage, for: .normal)
-        retry.setTitleColor(.secondaryLabel, for: .normal)
+        retry.setTitleColor(Colors.error.uiColor, for: .normal)
 
         // setup constraints
 

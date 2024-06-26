@@ -43,25 +43,27 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
     // MARK: - Public methods
 
     func fetchFeedPhoto(with index: Int) -> AnyPublisher<UIImage, Error> {
-        guard index < fetchedModels.count else {
+        guard let model = fetchedModels[safe: index] else {
             return Fail(error: Errors.incorrectIndex).eraseToAnyPublisher()
         }
 
-        return deps.photoLoadingService.loadPhoto(fetchedModels[index], size: .medium)
+        return deps.photoLoadingService.loadPhoto(model, size: .medium)
     }
-    
-    func startFetching() {
-        session.start()
-    }
-    
+
     func fetchNextPage() {
-        session.fetchNextPage()
+        if stateImpl.value.isNotStarted {
+            session.start()
+        } else {
+            session.fetchNextPage()
+        }
     }
-    
-    func reload() {
-        lastSessionModels = fetchedModels
-        session.clear()
-        session.start()
+
+    func retry() {
+        session.retry()
+    }
+
+    func clearAndRestart() {
+        session.clearAndRestart()
     }
 
     // MARK: - Private properties
@@ -71,8 +73,6 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
 
     private let stateImpl = CurrentValueSubject<FeedViewState, Never>(.notStarted)
     private var bag = Set<AnyCancellable>()
-
-    private var lastSessionModels: [PhotoModel]? = nil
 
     private var fetchedModels: [PhotoModel] {
         switch stateImpl.value {
@@ -89,24 +89,6 @@ private extension FeedCollectionInteractorImpl {
 
     private func updateFeedState(with sessionState: PhotosFeedSessionState) {
         let hasNextPage = session.hasNextPage
-        let loadingState = sessionState.loadingState
-
-        // Keeping last session photos on the screen until refreshed content is arrived
-        if let lastSessionModels {
-            if loadingState == .notStarted || loadingState == .fetching {
-                if !stateImpl.value.isRefreshing {
-                    stateImpl.send(
-                        .started(
-                            state: .refreshing,
-                            fetched: .init(models: lastSessionModels, hasNextPage: false)
-                        )
-                    )
-                }
-                return
-            } else {
-                self.lastSessionModels = nil
-            }
-        }
 
         switch sessionState {
         case (.notStarted, _):

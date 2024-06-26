@@ -31,6 +31,10 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
         didSet { invalidateLayout() }
     }
 
+    var errorItemHeight: CGFloat = 128.0 {
+        didSet { invalidateLayout() }
+    }
+
     // MARK: - Layout
 
     override func prepare() {
@@ -44,6 +48,7 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
         unionRects = []
         allItemAttributes = []
         sectionItemAttributes = []
+        errorItemAttributes = nil
 
         columnCount = calculatedColumnCount()
         columnHeights = (0..<numberOfSections).map { _ in
@@ -73,13 +78,25 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
                     sizeForItemAt: indexPath
                 )
 
-                let itemHeight: CGFloat = {
-                    if let itemSize, itemSize.height > 0.0, itemSize.width > 0.0 {
-                        floor(itemSize.height * itemWidth / itemSize.width)
-                    } else {
-                        0.0
-                    }
-                }()
+                let itemHeight: CGFloat
+                if let itemSize, itemSize.height > 0.0, itemSize.width > 0.0 {
+                    itemHeight = floor(itemSize.height * itemWidth / itemSize.width)
+                } else {
+                    // Assume only error cell has zero size
+
+                    let minXOffset = contentInsets.left
+                    let maxYOffset = columnHeights[section].max() ?? 0.0
+                    let fullWidth = contentWidth() - contentInsets.left - contentInsets.right
+
+                    attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+                    attributes.frame = CGRect(x: minXOffset, y: maxYOffset, width: fullWidth, height: errorItemHeight)
+
+                    itemAttributes.append(attributes)
+                    allItemAttributes.append(attributes)
+                    errorItemAttributes = attributes
+
+                    continue
+                }
 
                 attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
                 attributes.frame = CGRect(x: xOffset, y: yOffset, width: itemWidth, height: itemHeight)
@@ -110,11 +127,15 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
         var contentSize = collectionView.bounds.size
         contentSize.width = contentWidth()
 
-        if let height = columnHeights.last?.first {
-            contentSize.height = height
-            return contentSize
+        guard let heights = columnHeights.last else { return .zero }
+        guard let maxHeight = heights.max() else { return .zero }
+        contentSize.height = maxHeight
+
+        if let errorItem = errorItemAttributes {
+            contentSize.height = max(contentSize.height, errorItem.frame.maxY)
         }
-        return .zero
+
+        return contentSize
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
@@ -151,8 +172,11 @@ final class FeedCollectionWaterfallLayout: UICollectionViewLayout {
 
     private var columnCount: Int = 2
     private var columnHeights: [[CGFloat]] = []
+
     private var allItemAttributes: [UICollectionViewLayoutAttributes] = []
     private var sectionItemAttributes: [[UICollectionViewLayoutAttributes]] = []
+    private var errorItemAttributes: UICollectionViewLayoutAttributes?
+
     private var unionRects: [CGRect] = []
     private let unionSize = 20
 

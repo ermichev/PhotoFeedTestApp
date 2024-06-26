@@ -16,6 +16,7 @@
 		950059DE2C2C2122002EA1B8 /* AppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950059DD2C2C2122002EA1B8 /* AppSettingsViewModel.swift */; };
 		950059E02C2C21E3002EA1B8 /* FeedCollectionViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950059DF2C2C21E3002EA1B8 /* FeedCollectionViewCoordinator.swift */; };
 		950059E32C2C262A002EA1B8 /* CustomizableFeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950059E22C2C262A002EA1B8 /* CustomizableFeedService.swift */; };
+		950059E52C2C3F87002EA1B8 /* FeedErrorCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950059E42C2C3F87002EA1B8 /* FeedErrorCellView.swift */; };
 		95414D7C2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D7B2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift */; };
 		95414D7E2C28E008009A46A0 /* PhotoDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D7D2C28E008009A46A0 /* PhotoDetailsViewModel.swift */; };
 		95414D802C28E012009A46A0 /* PhotoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95414D7F2C28E012009A46A0 /* PhotoDetailsView.swift */; };
@@ -62,6 +63,7 @@
 		950059DD2C2C2122002EA1B8 /* AppSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsViewModel.swift; sourceTree = "<group>"; };
 		950059DF2C2C21E3002EA1B8 /* FeedCollectionViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionViewCoordinator.swift; sourceTree = "<group>"; };
 		950059E22C2C262A002EA1B8 /* CustomizableFeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizableFeedService.swift; sourceTree = "<group>"; };
+		950059E42C2C3F87002EA1B8 /* FeedErrorCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedErrorCellView.swift; sourceTree = "<group>"; };
 		95414D7B2C28DFE0009A46A0 /* PhotoDetailsInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsInteractor.swift; sourceTree = "<group>"; };
 		95414D7D2C28E008009A46A0 /* PhotoDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsViewModel.swift; sourceTree = "<group>"; };
 		95414D7F2C28E012009A46A0 /* PhotoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailsView.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 			children = (
 				95B3E29A2C222E3D00F7DE07 /* FeedPhotoCellViewModel.swift */,
 				956328242C191B040044457E /* FeedPhotoCellView.swift */,
+				950059E42C2C3F87002EA1B8 /* FeedErrorCellView.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 				95414D882C294E62009A46A0 /* SafariViewControllerRouter.swift in Sources */,
 				95414D802C28E012009A46A0 /* PhotoDetailsView.swift in Sources */,
 				950059D52C2BCE14002EA1B8 /* AppSettingsView.swift in Sources */,
+				950059E52C2C3F87002EA1B8 /* FeedErrorCellView.swift in Sources */,
 				950059D02C2BC778002EA1B8 /* FeedViewState.swift in Sources */,
 				95414D842C28F4FF009A46A0 /* RootView.swift in Sources */,
 				950059E32C2C262A002EA1B8 /* CustomizableFeedService.swift in Sources */,

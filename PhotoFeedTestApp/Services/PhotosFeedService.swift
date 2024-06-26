@@ -25,7 +25,7 @@ protocol PhotosFeedSession {
     func start()
     func retry()
     func fetchNextPage()
-    func clear()
+    func clearAndRestart()
 }
 
 protocol PhotosFeedService {
