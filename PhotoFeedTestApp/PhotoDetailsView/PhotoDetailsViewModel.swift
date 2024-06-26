@@ -10,9 +10,8 @@ import SwiftUI
 
 enum PhotoDetailsImageState: Equatable {
     case loading
-    case lowResImage(UIImage)
     case hiResImage(UIImage)
-    case error(lowResImage: UIImage?)
+    case error
 }
 
 enum PhotoDetailsDownloadState: Equatable {
@@ -36,6 +35,7 @@ protocol PhotoDetailsInteractor: AnyObject {
 
     var delegate: PhotoDetailsInteractorDelegate? { get set }
 
+    func retryLoadingHiRes()
     func handleGetFullImage()
     func handleShowAuthorPage()
     func onClose()
@@ -81,6 +81,11 @@ final class PhotoDetailsViewModel: ObservableObject {
     func onDownloadFullTap() {
         guard downloadState != .loading else { return }
         interactor.handleGetFullImage()
+    }
+
+    func onRetry() {
+        guard imageState == .error else { return }
+        interactor.retryLoadingHiRes()
     }
 
     private let interactor: PhotoDetailsInteractor

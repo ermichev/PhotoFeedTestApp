@@ -49,6 +49,7 @@ final class FeedPhotoCellView: UICollectionViewCell {
         imageView.backgroundColor = Colors.fill.secondary.uiColor
         setAuthorLabelVisible(false)
         retry.isHidden = true
+        retry.removeTarget(self, action: #selector(onRetryTap), for: .touchUpInside)
         loader.stopAnimating()
     }
 
@@ -59,6 +60,8 @@ final class FeedPhotoCellView: UICollectionViewCell {
 
         authorLabel.text = viewModel.title
         imageView.backgroundColor = viewModel.averageColor ?? Colors.fill.secondary.uiColor
+
+        retry.addTarget(self, action: #selector(onRetryTap), for: .touchUpInside)
 
         viewModel.imageState
             .sink(receiveValue: { [weak self] state in
@@ -111,10 +114,14 @@ private extension FeedPhotoCellView {
         static let innerCornerRadius = 10.0
         static let borderWidth = 8.0
         static let authorLabelInsets = UIEdgeInsets(top: 4.0, left: 8.0, bottom: 2.0, right: -4.0)
+        static let retryImageSize = 24.0
     }
 
     private enum Static {
         static let cellBaseColor = Colors.bg.secondary.uiColor
+        static let retryImage = Images.retry.uiImage
+            .sd_resizedImage(with: CGSize(width: 20.0, height: 20.0), scaleMode: .aspectFill)?
+            .withTintColor(Colors.error.uiColor, renderingMode: .alwaysOriginal)
     }
 
     // MARK: - Private methods
@@ -137,11 +144,12 @@ private extension FeedPhotoCellView {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = Layout.innerCornerRadius
 
-        imageView.addSubview(loader)
+        contentView.addSubview(loader)
 
-        imageView.addSubview(retry)
-        retry.setImage(Images.retry.uiImage, for: .normal)
-        retry.setTitleColor(Colors.error.uiColor, for: .normal)
+        contentView.addSubview(retry)
+        retry.setImage(Static.retryImage, for: .normal)
+        retry.backgroundColor = .white.withAlphaComponent(0.9)
+        retry.layer.cornerRadius = Layout.retryImageSize / 2.0
 
         // setup constraints
 
@@ -162,7 +170,9 @@ private extension FeedPhotoCellView {
 
         NSLayoutConstraint.activate([
             retry.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
-            retry.centerXAnchor.constraint(equalTo: imageView.centerXAnchor)
+            retry.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            retry.heightAnchor.constraint(equalToConstant: Layout.retryImageSize),
+            retry.widthAnchor.constraint(equalToConstant: Layout.retryImageSize),
         ])
     }
 
@@ -251,6 +261,10 @@ private extension FeedPhotoCellView {
         authorLabelContainer.isHidden = !visible
         authorTopCorner.isHidden = !visible
         authorLeftCorner.isHidden = !visible
+    }
+
+    @objc private func onRetryTap() {
+        viewModel?.tryLoadingImage()
     }
 
 }

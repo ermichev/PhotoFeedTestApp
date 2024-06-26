@@ -62,23 +62,32 @@ struct PhotoDetailsView: View {
                 ZStack {
                     Color(viewModel.imageAvgColor)
                     ProgressView()
+                        .frame(width: 32.0, height: 32.0)
                 }
-            case .lowResImage(let uIImage), .hiResImage(let uIImage):
+            case .hiResImage(let uIImage):
                 ZStack(alignment: .bottomTrailing) {
                     Image(uiImage: uIImage).resizable()
                     downloadButton
                 }
-            case .error(let image?):
-                ZStack {
-                    Image(uiImage: image).resizable()
-                    Images.retry.image
-                }
-            case .error(nil):
+            case .error:
                 ZStack {
                     Color(viewModel.imageAvgColor)
-                    Images.retry.image
+                    retryButton
                 }
             }
+        }
+    }
+
+    private var retryButton: some View {
+        Button(action: { viewModel.onRetry() }) {
+            ZStack {
+                Circle().fill(Color.white)
+                Images.retry.image
+                    .resizable()
+                    .tint(Colors.error.color)
+                    .frame(width: 32.0, height: 32.0)
+            }
+            .frame(width: 40.0, height: 40.0)
         }
     }
 

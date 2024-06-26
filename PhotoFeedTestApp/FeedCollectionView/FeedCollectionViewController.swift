@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 protocol FeedScreenRouter {
-    func showDetails(for model: PhotoModel, loadedPreview: UIImage?)
+    func showDetails(for model: PhotoModel)
     func showAppSettings()
 }
 
@@ -70,7 +70,7 @@ final class FeedCollectionViewController: UIViewController {
             .store(in: &bag)
 
         viewModel.cellTaps
-            .sink { [weak self] in self?.router?.showDetails(for: $0, loadedPreview: $1) }
+            .sink { [weak self] in self?.router?.showDetails(for: $0) }
             .store(in: &bag)
 
         // -

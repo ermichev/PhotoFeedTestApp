@@ -16,12 +16,8 @@ class FeedCollectionViewCoordinator: NSObject, FeedScreenRouter {
         self.parent = parent
     }
 
-    func showDetails(for model: PhotoModel, loadedPreview: UIImage?) {
-        let interactor = PhotoDetailsInteractorImpl(
-            photoModel: model,
-            loadedLowRes: loadedPreview,
-            deps: parent.deps
-        )
+    func showDetails(for model: PhotoModel) {
+        let interactor = PhotoDetailsInteractorImpl(photoModel: model, deps: parent.deps)
         interactor.delegate = self
         // Present sheet
         parent.presentedPhotoDetails = interactor

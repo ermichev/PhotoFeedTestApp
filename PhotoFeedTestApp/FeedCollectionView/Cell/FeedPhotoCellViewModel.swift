@@ -29,9 +29,20 @@ final class PhotoCellViewModel {
 
     // MARK: - Constructors
 
-    init(author: String?, averageColor: UIColor?, imageRequest: AnyPublisher<UIImage, Error>?) {
+    init(
+        author: String?,
+        averageColor: UIColor?,
+        imageRequest: AnyPublisher<UIImage, Error>?
+    ) {
         self.title = author
         self.averageColor = averageColor
+        self.imageRequest = imageRequest
+
+        tryLoadingImage()
+    }
+
+    func tryLoadingImage() {
+        imageStateImpl.send(.loading)
 
         imageRequest?
             .receive(on: RunLoop.main)
@@ -52,6 +63,8 @@ final class PhotoCellViewModel {
     }
 
     // MARK: - Public properties
+
+    private let imageRequest: AnyPublisher<UIImage, Error>?
 
     private let imageStateImpl = CurrentValueSubject<ImageState, Never>(.loading)
     private var bag = Set<AnyCancellable>()

@@ -39,7 +39,7 @@ final class FeedCollectionViewModel: NSObject {
         viewUpdateRequestsImpl.eraseToAnyPublisher()
     }
 
-    var cellTaps: AnyPublisher<(PhotoModel, UIImage?), Never> {
+    var cellTaps: AnyPublisher<PhotoModel, Never> {
         cellTapsImpl.eraseToAnyPublisher()
     }
 
@@ -77,7 +77,7 @@ final class FeedCollectionViewModel: NSObject {
     private let pullToRefreshControl = UIRefreshControl()
 
     private var viewUpdateRequestsImpl = PassthroughSubject<Void, Never>()
-    private var cellTapsImpl = PassthroughSubject<(PhotoModel, UIImage?), Never>()
+    private var cellTapsImpl = PassthroughSubject<PhotoModel, Never>()
     private var bag = Set<AnyCancellable>()
 
     private var cellViewModels: [PhotoCellViewModel] = []
@@ -146,7 +146,7 @@ extension FeedCollectionViewModel: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard indexPath.item < loadedPhotos.count else { return }
-        cellTapsImpl.send((loadedPhotos[indexPath.item], nil)) 
+        cellTapsImpl.send(loadedPhotos[indexPath.item])
         // TODO: future enhancement: pass lowres image as placeholder to details screen
     }
 

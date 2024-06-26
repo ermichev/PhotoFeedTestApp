@@ -43,25 +43,27 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor, SheetStateProvid
 
     // MARK: - Constructors
 
-    init(photoModel: PhotoModel, loadedLowRes: UIImage?, deps: Deps) {
+    init(photoModel: PhotoModel, deps: Deps) {
         self.model = photoModel
         self.deps = deps
 
         downloadStateImpl = .init(.idle)
-        imageStateImpl = if let loadedLowRes {
-            .init(.lowResImage(loadedLowRes))
-        } else {
-            .init(.loading)
-        }
+        imageStateImpl = .init(.loading)
 
-        deps.photoLoadingService.loadPhoto(photoModel, size: .large2x)
-            .map { PhotoDetailsImageState.hiResImage($0) }
-            .catch { [loadedLowRes] _ in Just(PhotoDetailsImageState.error(lowResImage: loadedLowRes)) }
-            .subscribe(imageStateImpl)
-            .store(in: &bag)
+        retryLoadingHiRes()
     }
 
     // MARK: - Public methods
+
+    func retryLoadingHiRes() {
+        imageStateImpl.send(.loading)
+
+        deps.photoLoadingService.loadPhoto(model, size: .large2x)
+            .map { PhotoDetailsImageState.hiResImage($0) }
+            .catch { _ in Just(PhotoDetailsImageState.error) }
+            .sink { [weak self] in self?.imageStateImpl.send($0) }
+            .store(in: &bag)
+    }
 
     func handleGetFullImage() {
         downloadStateImpl.send(.loading)

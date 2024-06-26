@@ -13,14 +13,20 @@ final class ApplicationDeps:
     FeedCollectionViewControllerDeps,
     PhotoDetailsInteractorDeps
 {
-    lazy var photosFeedService: PhotosFeedService = CustomizableFeedService(settings: appSettingsProvider.appSettings)
-    lazy var photoLoadingService: PhotoLoadingService = SDWebImageManager.shared
+
+    lazy var photosFeedService: PhotosFeedService =
+        CustomizableFeedService(settings: appSettingsProvider.appSettings)
+
+    lazy var photoLoadingService: PhotoLoadingService = 
+        CustomizablePhotoService(settings: appSettingsProvider.appSettings)
+
     lazy var safariViewControllerRouter: SafariViewControllerRouter = SafariViewControllerRouterImpl()
     lazy var sharingScreenRouter: SharingScreenRouter = SharingScreenRouterImpl()
 
     private lazy var appSettingsHolderImpl = AppSettingsHolderImpl()
     var appSettingsProvider: AppSettingsProvider { appSettingsHolderImpl }
     var appSettingsHolder: AppSettingsHolder { appSettingsHolderImpl }
+
 }
 
 // -
