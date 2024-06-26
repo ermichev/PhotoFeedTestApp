@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 protocol SharingScreenRouter {
-    func shareImage(_ image: UIImage)
+    func shareImage(_ image: UIImage, sourceRect: CGRect)
 }
 
 protocol PhotoDetailsInteractorDeps {
@@ -65,7 +65,7 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor, SheetStateProvid
             .store(in: &bag)
     }
 
-    func handleGetFullImage() {
+    func handleGetFullImage(viewRect: CGRect) {
         downloadStateImpl.send(.loading)
         deps.photoLoadingService.loadPhoto(model, size: .original)
             .sink(
@@ -79,7 +79,7 @@ final class PhotoDetailsInteractorImpl: PhotoDetailsInteractor, SheetStateProvid
                 }, 
                 receiveValue: { [weak self] in
                     self?.downloadStateImpl.send(.idle)
-                    self?.deps.sharingScreenRouter.shareImage($0)
+                    self?.deps.sharingScreenRouter.shareImage($0, sourceRect: viewRect)
                 }
             )
             .store(in: &bag)

@@ -9,14 +9,21 @@ import UIKit
 
 final class SharingScreenRouterImpl: SharingScreenRouter {
    
-    func shareImage(_ image: UIImage) {
+    func shareImage(_ image: UIImage, sourceRect: CGRect) {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             Logger.log.error("Failed to get jpeg image data")
             return
         }
 
-        let activityVC = UIActivityViewController(activityItems: [imageData], applicationActivities: [])
-        UIApplication.shared.topViewController()?.present(activityVC, animated: true)
+        let activityVC = UIActivityViewController(activityItems: [imageData], applicationActivities: nil)
+
+        if let rootVC = UIApplication.shared.applicationKeyWindow()?.rootViewController,
+           let topVC = UIApplication.shared.topViewController()
+        {
+            activityVC.popoverPresentationController?.sourceView = topVC.view
+            activityVC.popoverPresentationController?.sourceRect = topVC.view.convert(sourceRect, from: rootVC.view)
+            topVC.present(activityVC, animated: true)
+        }
     }
 
 }

@@ -31,9 +31,10 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
 
     // MARK: - Constructors
 
-    init(deps: Deps, pageSize: Int) {
+    init(deps: Deps, pageSize: Int, feedPhotoSize: PhotoSize) {
         self.deps = deps
         self.session = deps.photosFeedService.feedSession(pageSize: pageSize)
+        self.feedPhotoSize = feedPhotoSize
 
         session.state
             .sink { [weak self] in self?.updateFeedState(with: $0) }
@@ -47,7 +48,7 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
             return Fail(error: Errors.incorrectIndex).eraseToAnyPublisher()
         }
 
-        return deps.photoLoadingService.loadPhoto(model, size: .medium)
+        return deps.photoLoadingService.loadPhoto(model, size: feedPhotoSize)
     }
 
     func fetchNextPage() {
@@ -70,6 +71,7 @@ final class FeedCollectionInteractorImpl: FeedCollectionInteractor {
 
     private let deps: Deps
     private let session: PhotosFeedSession
+    private let feedPhotoSize: PhotoSize
 
     private let stateImpl = CurrentValueSubject<FeedViewState, Never>(.notStarted)
     private var bag = Set<AnyCancellable>()

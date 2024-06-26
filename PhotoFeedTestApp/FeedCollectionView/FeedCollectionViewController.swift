@@ -34,8 +34,12 @@ final class FeedCollectionViewController: UIViewController {
     init(deps: Deps) {
         self.deps = deps
 
+        self.estimatedItemWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 2.0
+        // Request larger photos for bigger screens
+        let feedPhotoSize: PhotoSize = estimatedItemWidth > 350.0 ? .large : .medium
+
         let pageSize = deps.appSettingsProvider.appSettings.settings.pageSize
-        let interactor = FeedCollectionInteractorImpl(deps: deps, pageSize: pageSize)
+        let interactor = FeedCollectionInteractorImpl(deps: deps, pageSize: pageSize, feedPhotoSize: feedPhotoSize)
         self.viewModel = FeedCollectionViewModel(interactor: interactor)
 
         super.init(nibName: nil, bundle: nil)
@@ -50,7 +54,7 @@ final class FeedCollectionViewController: UIViewController {
 
     override func viewDidLoad() {
         let layout = FeedCollectionWaterfallLayout()
-        layout.estimatedColumnWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 2.0
+        layout.estimatedColumnWidth = estimatedItemWidth
 
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         self.collectionView = collection
@@ -106,6 +110,7 @@ final class FeedCollectionViewController: UIViewController {
 
     private let deps: Deps
     private let viewModel: FeedCollectionViewModel
+    private let estimatedItemWidth: CGFloat
 
     private var collectionView: UICollectionView?
     private var settingsButton = UIButton(type: .system)

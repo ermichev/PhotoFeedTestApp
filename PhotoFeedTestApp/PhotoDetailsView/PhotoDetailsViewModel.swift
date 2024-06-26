@@ -36,7 +36,7 @@ protocol PhotoDetailsInteractor: AnyObject {
     var delegate: PhotoDetailsInteractorDelegate? { get set }
 
     func retryLoadingHiRes()
-    func handleGetFullImage()
+    func handleGetFullImage(viewRect: CGRect)
     func handleShowAuthorPage()
     func onClose()
 }
@@ -78,9 +78,9 @@ final class PhotoDetailsViewModel: ObservableObject {
         interactor.handleShowAuthorPage()
     }
 
-    func onDownloadFullTap() {
+    func onDownloadFullTap(with viewRect: CGRect) {
         guard downloadState != .loading else { return }
-        interactor.handleGetFullImage()
+        interactor.handleGetFullImage(viewRect: viewRect)
     }
 
     func onRetry() {

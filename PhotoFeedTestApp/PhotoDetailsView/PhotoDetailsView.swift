@@ -52,8 +52,11 @@ struct PhotoDetailsView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .layoutPriority(0)
             }
+            .padding(.bottom, 16.0)
         }
     }
+
+    // -
 
     private var imageContentView: some View {
         Group {
@@ -92,31 +95,35 @@ struct PhotoDetailsView: View {
     }
 
     private var downloadButton: some View {
-        Button(
-            action: { viewModel.onDownloadFullTap() },
-            label: {
-                ZStack {
-                    Circle()
-                        .foregroundStyle(Color.white.opacity(0.9))
-                    switch viewModel.downloadState {
-                    case .idle:
-                        Images.download.image.resizable()
-                            .foregroundStyle(Color.accentColor)
-                            .padding(4.0)
-                    case .loading:
-                        ProgressView()
-                            .environment(\.colorScheme, .light)
-                    case .error:
-                        Images.retry.image.resizable()
-                            .foregroundColor(Colors.error.color)
-                            .padding(4.0)
-                    }
+        GeometryReader { proxy in
+            Button(
+                action: {
+                    viewModel.onDownloadFullTap(with: proxy.frame(in: CoordinateSpace.global))
+                },
+                label: {
+                    ZStack {
+                        Circle()
+                            .foregroundStyle(Color.white.opacity(0.9))
+                        switch viewModel.downloadState {
+                        case .idle:
+                            Images.download.image.resizable()
+                                .foregroundStyle(Color.accentColor)
+                                .padding(4.0)
+                        case .loading:
+                            ProgressView()
+                                .environment(\.colorScheme, .light)
+                        case .error:
+                            Images.retry.image.resizable()
+                                .foregroundColor(Colors.error.color)
+                                .padding(4.0)
+                        }
 
+                    }
                 }
-                .frame(width: 32.0, height: 32.0)
-                .padding(16.0)
-            }
-        )
+            )
+        }
+        .frame(width: 32.0, height: 32.0)
+        .padding(16.0)
     }
 
     private var details: some View {

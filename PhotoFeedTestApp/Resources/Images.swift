@@ -13,7 +13,7 @@ enum Images {
     static let retry = ImageHolder(system: "arrow.clockwise.circle.fill")
     static let close = ImageHolder(system: "xmark.circle.fill")
     static let openExternal = ImageHolder(system: "arrow.up.right.square")
-    static let download = ImageHolder(system: "arrowshape.down.circle.fill")
+    static let download = ImageHolder(system: "arrow.down.circle.fill")
     static let settings = ImageHolder(system: "gearshape")
 }
 
